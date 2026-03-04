@@ -181,3 +181,33 @@ ctx.get(MyInterface.class);
 ```
 
 </details>
+
+# API
+###### MAVEN
+```xml
+<repository>
+  <id>jetby-repo</id>
+  <url>http://api.jetby.space/</url>
+</repository>
+```
+```xml
+<dependency>
+  <groupId>me.jetby</groupId>
+  <artifactId>Libb</artifactId>
+  <version>1.0</version>
+</dependency>
+```
+###### GRADLE
+```gradle
+repositories {
+    maven {
+        url "http://api.jetby.space/"
+        name "jetby-repo"
+    }
+}
+```
+```gradle
+dependencies {
+    implementation "me.jetby:Libb:1.0"
+}
+```
