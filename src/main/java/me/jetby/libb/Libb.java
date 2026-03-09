@@ -3,11 +3,15 @@ package me.jetby.libb;
 import lombok.Getter;
 import me.jetby.libb.configuration.MenusLoader;
 import me.jetby.libb.executors.LibbCommand;
+import me.jetby.libb.gui.AdvancedGui;
 import me.jetby.libb.gui.CommandRegistrar;
 import me.jetby.libb.gui.GuiListener;
 import me.jetby.libb.gui.parser.Gui;
 import me.jetby.libb.papi.Test;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -46,5 +50,11 @@ public final class Libb extends JavaPlugin {
     public void onDisable() {
         new Test().unregister();
         CommandRegistrar.unregisterAll(this);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            Inventory topInventory = player.getOpenInventory().getTopInventory();
+            if (!(topInventory instanceof AdvancedGui)) continue;
+            player.closeInventory();
+        }
     }
 }

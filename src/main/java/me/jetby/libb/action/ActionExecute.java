@@ -6,6 +6,7 @@ import me.jetby.libb.action.record.ActionBlock;
 import me.jetby.libb.action.record.Expression;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,9 +30,6 @@ import java.util.List;
  * }</pre>
  */
 public final class ActionExecute {
-
-    private ActionExecute() {
-    }
 
     public static void run(@NotNull ActionContext ctx, @NotNull String line) {
         String key = ActionRegistry.resolveKey(line);
@@ -116,7 +114,7 @@ public final class ActionExecute {
             final int finalNextBatchStart = nextBatchStart;
             final long finalNextDelay = accumulatedDelay + nextDelay;
             if (accumulatedDelay <= 0) {
-                scheduleChain( ctx, items, finalNextBatchStart, finalNextDelay);
+                scheduleChain(ctx, items, finalNextBatchStart, finalNextDelay);
             } else {
                 Bukkit.getScheduler().runTaskLater(Libb.getInstance(), () ->
                                 scheduleChain(ctx, items, finalNextBatchStart, finalNextDelay),

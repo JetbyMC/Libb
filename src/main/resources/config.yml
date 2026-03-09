@@ -34,6 +34,8 @@ Items:
     amount: 1
     slot: 11
 
+    priority: 1
+
     display_name: "Name"
     lore:
       - "Line1"
@@ -42,15 +44,8 @@ Items:
       - HIDE_ATTRIBUTES
 
     view_requirements:
-      check1:
-        if: "5 > 10"
-        then:
-          - display_name: "Another name"
-          - lore:
-              - "Red"
-              - "----------"
-          - slot: 12
-          - lore[1]: "Yellow"
+      - "5 > 10"
+
 
     on_click:
       any:

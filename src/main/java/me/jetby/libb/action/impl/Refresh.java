@@ -13,19 +13,12 @@ public class Refresh implements Action {
 
     @Override
     public void execute(@NotNull ActionContext ctx, @Nullable String line) {
-        ItemWrapper wrapper = ctx.get(ItemWrapper.class);
-        AdvancedGui gui = ctx.get(AdvancedGui.class);
         ParsedGui parsedGui = ctx.get(ParsedGui.class);
-
-        if (wrapper == null || gui == null) return;
 
         Player player = ctx.getPlayer();
         if (player == null) return;
 
-        wrapper.refresh(player, gui.getInventory());
-
-        if (parsedGui != null) {
-            parsedGui.applyViewRequirements(player);
-        }
+        if (parsedGui==null) return;
+        parsedGui.refresh();
     }
 }

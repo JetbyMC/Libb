@@ -1,9 +1,6 @@
 package me.jetby.libb.gui.parser;
 
-import lombok.Getter;
-import lombok.Setter;
 import me.jetby.libb.action.record.ActionBlock;
-import me.jetby.libb.gui.parser.view.ViewRequirement;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -53,10 +50,14 @@ public class Item {
     public @Nullable ConfigurationSection section() { return section; }
     public void section(@Nullable ConfigurationSection section) { this.section = section; }
 
-    public @NotNull List<ViewRequirement> viewRequirements() { return viewRequirements; }
-    public void viewRequirements(@NotNull List<ViewRequirement> viewRequirements) {
+    public @NotNull List<String> viewRequirements() { return viewRequirements; }
+    public void viewRequirements(@NotNull List<String> viewRequirements) {
         this.viewRequirements = viewRequirements;
     }
+
+    /** Lower number = higher priority. Default is Integer.MAX_VALUE (lowest). */
+    public int priority() { return priority; }
+    public void priority(int priority) { this.priority = priority; }
 
     public Item(@Nullable ItemStack itemStack,
                 @Nullable String type,
@@ -91,5 +92,6 @@ public class Item {
     private @Nullable List<Enchantment> enchantments;
     private @Nullable ConfigurationSection section;
     private @NotNull Map<ClickType, ActionBlock> onClick = new HashMap<>();
-    private @NotNull List<ViewRequirement> viewRequirements = new ArrayList<>();
+    private @NotNull List<String> viewRequirements = new ArrayList<>();
+    private int priority = Integer.MAX_VALUE;
 }

@@ -8,233 +8,183 @@ import me.jetby.libb.action.ActionExecute;
 import me.jetby.libb.action.record.ActionBlock;
 import me.jetby.libb.gui.AdvancedGui;
 import me.jetby.libb.gui.item.ItemWrapper;
-import me.jetby.libb.gui.parser.view.ItemPatchApplier;
-import me.jetby.libb.gui.parser.view.ViewRequirement;
-import org.bukkit.configuration.ConfigurationSection;
+import me.jetby.libb.gui.parser.view.RequirementEvaluator;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ParsedGui {
 
     @Getter
-    private final AdvancedGui gui;
-    private final ActionBlock onOpen;
-    private final ActionBlock onClose;
-    @Getter
-    private final List<String> openCommands;
-    private final Player player;
+    private final AdvancedGui holder;
+    private final Player viewer;
+    private final Gui guiSettings;
 
+    private final Map<String, Consumer<ConfigurableClickEvent>> clickHandlers = new HashMap<>();
 
-    private final Map<String, ItemEntry> itemEntries = new LinkedHashMap<>();
+    private record ItemEntry(Item item, ItemWrapper wrapper) {}
 
-    private record ItemEntry(Item item, ItemWrapper wrapper) {
-    }
+    public ParsedGui(@NotNull Player viewer, @NotNull Gui guiDefinition) {
+        this.guiSettings = guiDefinition;
+        this.viewer       = viewer;
 
-    public ParsedGui(@NotNull Player player, Gui gui) {
-        this.player = player;
-        this.openCommands = gui.command();
-        this.onOpen = gui.onOpen();
-        this.onClose = gui.onClose();
-
-        this.gui = new AdvancedGui(
+        this.holder = new AdvancedGui(
                 Libb.MINI_MESSAGE.deserialize(
-                        PlaceholderAPI.setPlaceholders(player, gui.title())),
-                gui.size());
+                        PlaceholderAPI.setPlaceholders(viewer, guiDefinition.title())),
+                guiDefinition.size()
+        );
 
-        attachLifecycle();
-        registerItems(gui.items());
+        setupLifecycleListeners();
+        buildItems(guiDefinition.items());
     }
 
-    public ParsedGui(Player player, FileConfiguration configuration) {
-        this.player = player;
+    public ParsedGui(@NotNull Player viewer, @NotNull FileConfiguration config) {
+        this.viewer       = viewer;
 
-        String title = configuration.getString("title");
-        int size = configuration.getInt("size");
-
-        this.openCommands = configuration.getStringList("command");
-        this.onOpen = ParseUtil.getActionBlock(configuration, "on_open");
-        this.onClose = ParseUtil.getActionBlock(configuration, "on_close");
-
-        this.gui = new AdvancedGui(title, size);
-
-        attachLifecycle();
-        registerItems(ParseUtil.getItems(configuration));
+        this.holder = new AdvancedGui(
+                config.getString("title", ""),
+                config.getInt("size", 54)
+        );
+        this.guiSettings = new Gui(
+                config.getString("id"),
+                config.getString("title"),
+                config.getInt("size"),
+                config.getStringList("command"),
+                config.getStringList("pre_open"),
+                ParseUtil.getActionBlock(config, "on_open"),
+                ParseUtil.getActionBlock(config, "on_close"),
+                ParseUtil.getItems(config)
+        );
+        setupLifecycleListeners();
+        buildItems(guiSettings.items());
     }
 
-    private void attachLifecycle() {
-        gui.onOpen(event -> {
-            if (onOpen != null)
-                ActionExecute.run(ActionContext.of(player), onOpen);
-
-            applyViewRequirements();
+    private void setupLifecycleListeners() {
+        holder.onOpen(event -> {
+            if (guiSettings.onOpen() != null)
+                ActionExecute.run(ActionContext.of(viewer).with(this), guiSettings.onOpen());
         });
-
-        gui.onClose(event -> {
-            if (onClose != null)
-                ActionExecute.run(ActionContext.of(player), onClose);
+        holder.onClose(event -> {
+            if (guiSettings.onClose() != null)
+                ActionExecute.run(ActionContext.of(viewer).with(this), guiSettings.onClose());
         });
     }
 
-    /**
-     * Evaluates each item's {@code view_requirements} and applies any matching
-     * patches.  Call this any time you want to refresh the GUI (e.g. after a
-     * command or timer updates a placeholder value).
-     */
-    public void applyViewRequirements() {
-        for (ItemEntry entry : itemEntries.values()) {
-            applyViewRequirements(entry.item(), entry.wrapper());
-        }
+    public void refresh() {
+        clearInventory();
+        buildItems(guiSettings.items());
     }
 
-    /**
-     * Overload that accepts an explicit player — useful when the original
-     * player reference may be stale (e.g. after a reconnect).
-     */
-    public void applyViewRequirements(Player viewer) {
-        for (ItemEntry entry : itemEntries.values()) {
-            applyViewRequirementsFor(entry.item(), entry.wrapper(), viewer);
-        }
+    private void clearInventory() {
+        holder.getItems().clear();
+        holder.getInventory().clear();
     }
 
-    private void applyViewRequirements(Item item, ItemWrapper wrapper) {
-        applyViewRequirementsFor(item, wrapper, player);
-    }
-
-    private void applyViewRequirementsFor(Item item, ItemWrapper wrapper, Player viewer) {
-        List<ViewRequirement> reqs = item.viewRequirements();
-        if (reqs == null || reqs.isEmpty()) return;
-
-        for (ViewRequirement req : reqs) {
-            String resolved = PlaceholderAPI.setPlaceholders(viewer, req.expression());
-
-            if (evaluateExpression(resolved)) {
-                ItemPatchApplier.apply(wrapper, req.patches(), viewer, gui);
-            }
-        }
-    }
-
-    /**
-     * Tiny expression evaluator that handles the common cases used in configs:
-     * {@code A > B}, {@code A < B}, {@code A >= B}, {@code A <= B},
-     * {@code A == B}, {@code A != B}, and a bare boolean / truthy string.
-     *
-     * <p>Both sides are first tried as doubles; if that fails they are compared
-     * as strings.
-     */
-    static boolean evaluateExpression(String expression) {
-        if (expression == null) return false;
-        expression = expression.trim();
-
-        for (String op : new String[]{">=", "<=", "!=", "==", ">", "<"}) {
-            int idx = expression.indexOf(op);
-            if (idx < 0) continue;
-
-            String left = expression.substring(0, idx).trim();
-            String right = expression.substring(idx + op.length()).trim();
-
-            try {
-                double l = Double.parseDouble(left);
-                double r = Double.parseDouble(right);
-                return switch (op) {
-                    case ">" -> l > r;
-                    case "<" -> l < r;
-                    case ">=" -> l >= r;
-                    case "<=" -> l <= r;
-                    case "==" -> l == r;
-                    case "!=" -> l != r;
-                    default -> false;
-                };
-            } catch (NumberFormatException ignored) {
-                int cmp = left.compareTo(right);
-                return switch (op) {
-                    case ">" -> cmp > 0;
-                    case "<" -> cmp < 0;
-                    case ">=" -> cmp >= 0;
-                    case "<=" -> cmp <= 0;
-                    case "==" -> cmp == 0;
-                    case "!=" -> cmp != 0;
-                    default -> false;
-                };
-            }
-        }
-
-        return Boolean.parseBoolean(expression) ||
-                expression.equalsIgnoreCase("yes") ||
-                expression.equals("1");
-    }
-
-    private void registerItems(List<Item> items) {
+    private void buildItems(List<Item> items) {
         if (items == null) return;
+
+        Map<Integer, List<Item>> slotCandidates = new LinkedHashMap<>();
 
         for (Item item : items) {
             if (item.itemStack() == null) continue;
+            for (int slot : item.slots()) {
+                slotCandidates.computeIfAbsent(slot, k -> new ArrayList<>()).add(item);
+            }
+        }
 
-            String key = UUID.randomUUID().toString();
-            ItemWrapper wrapper = new ItemWrapper(item.itemStack());
+        Map<Integer, Item> slotWinners = new LinkedHashMap<>();
 
-            wrapper.slots(item.slots().toArray(new Integer[0]));
-
-            if (item.displayName() != null)
-                wrapper.setDisplayName(PlaceholderAPI.setPlaceholders(player, item.displayName()));
-
-            wrapper.setRawDisplayName(item.displayName());
-            wrapper.setRawLore(item.lore());
-
-            List<String> lore = new ArrayList<>();
-            for (String line : item.lore())
-                lore.add(PlaceholderAPI.setPlaceholders(player, line));
-            wrapper.setLore(lore);
-
-            if (item.flags() != null)
-                wrapper.flags(item.flags().toArray(new ItemFlag[0]));
-
-            wrapper.onClick(event -> {
-                event.setCancelled(true);
-                Player p = (Player) event.getWhoClicked();
-
-                if (item.onClick().containsKey(null))
-                    ActionExecute.run(ActionContext.of(p)
-                                    .with(wrapper)
-                                    .with(gui)
-                                    .with(ParsedGui.class, this),
-                            item.onClick().get(null));
-
-                for (var entry : item.onClick().entrySet()) {
-                    ClickType required = entry.getKey();
-                    if (required == null) continue;
-                    if (!event.getClick().equals(required)) continue;
-                    ActionExecute.run(ActionContext.of(p)
-                                    .with(wrapper)
-                                    .with(gui)
-                                    .with(ParsedGui.class, this),
-                            entry.getValue());
+        for (Map.Entry<Integer, List<Item>> entry : slotCandidates.entrySet()) {
+            int slot = entry.getKey();
+            List<Item> sorted = new ArrayList<>(entry.getValue());
+            sorted.sort(Comparator.comparingInt(Item::priority));
+            for (Item candidate : sorted) {
+                if (RequirementEvaluator.meetsAll(viewer, candidate.viewRequirements())) {
+                    slotWinners.put(slot, candidate);
+                    break;
                 }
+            }
+        }
 
-                for (var entry : itemHandlers.entrySet()) {
-                    String handlerKey = entry.getKey();
-                    if (item.section() != null && item.section().contains(handlerKey)) {
-                        entry.getValue().accept(event, item.section());
-                    }
-                }
-            });
+        Map<Item, List<Integer>> itemWonSlots = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Item> e : slotWinners.entrySet()) {
+            itemWonSlots.computeIfAbsent(e.getValue(), k -> new ArrayList<>()).add(e.getKey());
+        }
 
-            gui.setItem(key, wrapper);
-            itemEntries.put(key, new ItemEntry(item, wrapper));
+        for (Map.Entry<Item, List<Integer>> e : itemWonSlots.entrySet()) {
+            Item item = e.getKey();
+            List<Integer> wonSlots = e.getValue();
+
+            String      key     = UUID.randomUUID().toString();
+            ItemWrapper wrapper = buildItemWrapper(item, wonSlots);
+            holder.setItem(key, wrapper);
         }
     }
 
-    private final Map<String, BiConsumer<InventoryClickEvent, ConfigurationSection>> itemHandlers = new HashMap<>();
+    private ItemWrapper buildItemWrapper(Item item, List<Integer> wonSlots) {
+        ItemWrapper wrapper = new ItemWrapper(item.itemStack());
+        wrapper.slots(wonSlots.toArray(new Integer[0]));
 
-    public ParsedGui setItemHandler(String key,
-                                    BiConsumer<InventoryClickEvent, ConfigurationSection> handler) {
-        itemHandlers.put(key, handler);
+        if (item.displayName() != null) {
+            wrapper.setDisplayName(PlaceholderAPI.setPlaceholders(viewer, item.displayName()));
+            wrapper.setRawDisplayName(item.displayName());
+        }
+
+        wrapper.setRawLore(item.lore());
+        wrapper.setLore(applyPlaceholders(item.lore()));
+
+        if (item.flags() != null)
+            wrapper.flags(item.flags().toArray(new ItemFlag[0]));
+
+        wrapper.onClick(event -> {
+            event.setCancelled(true);
+            Player clicker = (Player) event.getWhoClicked();
+            dispatchItemClick(clicker, wrapper, item, event);
+        });
+
+        return wrapper;
+    }
+
+    private ItemWrapper buildItemWrapper(Item item) {
+        return buildItemWrapper(item, item.slots());
+    }
+
+    private void dispatchItemClick(Player clicker, ItemWrapper wrapper, Item item,
+                                   org.bukkit.event.inventory.InventoryClickEvent event) {
+        if (item.onClick().containsKey(null))
+            ActionExecute.run(ActionContext.of(clicker).with(wrapper).with(this).with(holder),
+                    item.onClick().get(null));
+
+        for (Map.Entry<ClickType, ActionBlock> entry : item.onClick().entrySet()) {
+            ClickType requiredClick = entry.getKey();
+            if (!event.getClick().equals(requiredClick)) continue;
+            ActionExecute.run(ActionContext.of(clicker)
+                            .with(wrapper)
+                            .with(this)
+                            .with(holder),
+                    entry.getValue());
+        }
+
+        for (Map.Entry<String, Consumer<ConfigurableClickEvent>> handlerEntry : clickHandlers.entrySet()) {
+            if (item.section() != null && item.section().contains(handlerEntry.getKey()))
+                handlerEntry.getValue().accept(new ConfigurableClickEvent(event, item.section(), wrapper));
+        }
+    }
+
+    private List<String> applyPlaceholders(List<String> lines) {
+        List<String> result = new ArrayList<>(lines.size());
+        for (String line : lines)
+            result.add(PlaceholderAPI.setPlaceholders(viewer, line));
+        return result;
+    }
+
+    public ParsedGui addClickHandler(String sectionKey, Consumer<ConfigurableClickEvent> handler) {
+        clickHandlers.put(sectionKey, handler);
         return this;
     }
 }
