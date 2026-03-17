@@ -1,6 +1,6 @@
 
 id: main # the unique gui name
-title: "&0&lSimple gui"
+title: "&0&lExample"
 size: 54
 
 command:
@@ -65,26 +65,4 @@ Items:
       drop: []
       control_drop: []
       middle: []
-      double: []
-      num_1: []
-      num_2: []
-      num_3: []
-      num_4: []
-      num_5: []
-      num_6: []
-      num_7: []
-      num_8: []
-      num_9: []
-
-#
-#  example_free:
-#    type: free_zone
-#    slots:
-#      - '15-20'
-#
-#  example_free_usage:
-#    material: emerald
-#    type:
-#
-
 
