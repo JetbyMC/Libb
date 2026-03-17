@@ -8,6 +8,7 @@ import me.jetby.libb.gui.CommandRegistrar;
 import me.jetby.libb.gui.GuiListener;
 import me.jetby.libb.gui.parser.Gui;
 import me.jetby.libb.papi.Test;
+import me.jetby.libb.tools.Metrics;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -32,7 +33,9 @@ public final class Libb extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        new Metrics(this, 30288);
         saveDefaultConfig();
+
 
         getCommand("libb").setExecutor(new LibbCommand(this));
 
