@@ -84,7 +84,7 @@ public class AdvancedGui implements InventoryHolder {
                 meta.lore(wrapper.lore());
                 meta.setCustomModelData(wrapper.customModelData());
                 if (wrapper.enchanted()) {
-                    meta.addEnchant(Enchantment.OXYGEN, 1, false);
+                    meta.addEnchant(Enchantment.KNOCKBACK, 1, false);
                 }
                 if (wrapper.flags() != null && !wrapper.flags().isEmpty()) {
                     for (ItemFlag flag : wrapper.flags()) {

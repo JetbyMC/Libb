@@ -7,14 +7,15 @@ command:
   - test
   - example
 
-var:
-  example: 0
-
-pre_open:
-  check1:
-    if: "%num% > 6"
-  check2:
-    if: "9 < %num%"
+# soon...
+#var:
+#  example: 0
+#
+#pre_open:
+#  check1:
+#    if: "%num% > 6"
+#  check2:
+#    if: "9 < %num%"
 
 on_open:
   - '[message] msg'

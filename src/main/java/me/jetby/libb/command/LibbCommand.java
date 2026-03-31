@@ -7,6 +7,7 @@ import me.jetby.libb.command.annotations.TabComplete;
 import me.jetby.libb.command.annotations.messages.InsufficientArgs;
 import me.jetby.libb.gui.AdvancedGui;
 import me.jetby.libb.gui.parser.ParsedGui;
+import me.jetby.libb.util.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +23,6 @@ public class LibbCommand extends AdvancedCommand {
         this.plugin = plugin;
     }
 
-
     @SubCommand("reload")
     @Permission("libb.command.reload")
     public void reload(CommandSender sender) {
@@ -31,6 +31,7 @@ public class LibbCommand extends AdvancedCommand {
 
             plugin.guisConfiguration.unregisterGuiCommands();
             plugin.guisConfiguration.load();
+            Logger.info(plugin, "<#0AD7FB>▶ " + Libb.PARSED_GUIS.size() + " guis loaded");
             for (Player p : Bukkit.getOnlinePlayers()) {
                 Inventory topInventory = p.getOpenInventory().getTopInventory();
                 if (!(topInventory instanceof AdvancedGui)) continue;

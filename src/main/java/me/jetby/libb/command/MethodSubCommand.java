@@ -6,7 +6,7 @@ import me.jetby.libb.command.annotations.Permission;
 import me.jetby.libb.command.annotations.PlayerOnly;
 import me.jetby.libb.command.annotations.messages.Arg;
 import me.jetby.libb.command.annotations.messages.InsufficientArgs;
-import me.jetby.libb.tool.CooldownUtil;
+import me.jetby.libb.util.CooldownUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

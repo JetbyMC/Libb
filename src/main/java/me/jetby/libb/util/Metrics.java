@@ -1,4 +1,4 @@
-package me.jetby.libb.tool;
+package me.jetby.libb.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;

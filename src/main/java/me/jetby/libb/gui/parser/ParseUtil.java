@@ -1,8 +1,9 @@
 package me.jetby.libb.gui.parser;
 
+import me.jetby.libb.Libb;
 import me.jetby.libb.action.record.ActionBlock;
 import me.jetby.libb.action.record.Expression;
-import org.bukkit.Bukkit;
+import me.jetby.libb.util.Logger;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -68,7 +69,7 @@ public class ParseUtil {
                 }
             }
         } else {
-            Bukkit.getLogger().warning("Unknown slot format: " + slotObject);
+            Logger.warn(Libb.INSTANCE, "Unknown slot format: " + slotObject);
         }
 
         return slots;
@@ -85,13 +86,13 @@ public class ParseUtil {
                     slots.add(i);
                 }
             } catch (NumberFormatException e) {
-                Bukkit.getLogger().warning("Error parsing slot range: " + slotString);
+                Logger.warn(Libb.INSTANCE, "Error parsing slot range: " + slotString);
             }
         } else {
             try {
                 slots.add(Integer.parseInt(slotString));
             } catch (NumberFormatException e) {
-                Bukkit.getLogger().warning("Error parsing single slot: " + slotString);
+                Logger.warn(Libb.INSTANCE, "Error parsing single slot: " + slotString);
             }
         }
         return slots;
@@ -116,7 +117,7 @@ public class ParseUtil {
                 try {
                     itemStack = SkullCreator.itemFromBase64(material.replace("BASEHEAD-", ""));
                 } catch (Exception e) {
-                    Bukkit.getLogger().warning("Error creating custom skull: " + e.getMessage());
+                    Logger.warn(Libb.INSTANCE, "Error creating custom skull: " + e.getMessage());
                     itemStack = new ItemStack(SkullCreator.createSkull());
                 }
             } else {

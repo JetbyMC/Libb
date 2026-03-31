@@ -1,4 +1,4 @@
-package me.jetby.libb.tool;
+package me.jetby.libb.util;
 
 import java.util.HashMap;
 import java.util.Map;

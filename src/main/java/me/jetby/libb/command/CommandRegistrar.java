@@ -1,5 +1,7 @@
 package me.jetby.libb.command;
 
+import me.jetby.libb.Libb;
+import me.jetby.libb.util.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -12,7 +14,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class CommandRegistrar extends BukkitCommand {
 
@@ -29,11 +30,6 @@ public class CommandRegistrar extends BukkitCommand {
 
     public static void registerCommand(JavaPlugin plugin, String commandName, @NotNull CommandExecutor executor) {
 
-        PluginCommand command = plugin.getServer().getPluginCommand(commandName);
-        if (command == null) {
-            plugin.getLogger().log(Level.WARNING, "You are attempting to register the command " + commandName + ", but you have not added it to plugin.yml.");
-            return;
-        }
 
         try {
             Field commandMapField = plugin.getServer().getClass().getDeclaredField("commandMap");
@@ -50,12 +46,12 @@ public class CommandRegistrar extends BukkitCommand {
                     syncCommands.setAccessible(true);
                     syncCommands.invoke(plugin.getServer());
                 } catch (Exception e) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to sync commands", e);
+                    Logger.warn(plugin, "Failed to sync commands", e);
                 }
             });
 
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            plugin.getLogger().log(Level.WARNING, "Error with command registration", e);
+            Logger.warn(plugin, "Error with command registration", e);
         }
     }
 
@@ -94,13 +90,14 @@ public class CommandRegistrar extends BukkitCommand {
             knownCommandsField.setAccessible(true);
             Map<String, Command> knownCommands = (Map<String, Command>) knownCommandsField.get(commandMap);
 
+
             Command existing = knownCommands.remove(commandName.toLowerCase());
             if (existing != null) {
                 existing.unregister(commandMap);
             }
 
         } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error with command unregistration", e);
+            Logger.warn(plugin, "Error with command unregistration", e);
         }
     }
 
@@ -136,12 +133,12 @@ public class CommandRegistrar extends BukkitCommand {
                     syncCommands.setAccessible(true);
                     syncCommands.invoke(plugin.getServer());
                 } catch (Exception e) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to sync commands", e);
+                    Logger.warn(plugin, "Failed to sync commands", e);
                 }
             });
 
         } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error with commands unregistration", e);
+            Logger.warn(plugin, "Error with commands unregistration", e);
         }
     }
 
@@ -157,7 +154,7 @@ public class CommandRegistrar extends BukkitCommand {
             registeredCommands.clear();
 
         } catch (Exception e) {
-            Bukkit.getLogger().log(Level.WARNING, "[Libb] Error with commands unregistration", e);
+            Logger.warn(Libb.INSTANCE, "Error with commands unregistration", e);
         }
     }
 

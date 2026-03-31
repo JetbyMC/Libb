@@ -7,7 +7,7 @@ import me.jetby.libb.gui.parser.Gui;
 import me.jetby.libb.gui.parser.Item;
 import me.jetby.libb.gui.parser.ParseUtil;
 import me.jetby.libb.gui.parser.ParsedGui;
-import org.bukkit.Bukkit;
+import me.jetby.libb.util.Logger;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +17,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.logging.Level;
 
 import static me.jetby.libb.command.CommandRegistrar.registerCommand;
 
@@ -25,15 +24,12 @@ public class GuisConfiguration {
 
     private final Libb plugin;
 
-    int amount = 0;
-
     public GuisConfiguration(Libb plugin) {
         this.plugin = plugin;
     }
 
     public void load() {
         Libb.PARSED_GUIS.clear();
-        amount = 0;
 
         File folder = new File(plugin.getDataFolder(), "menus");
         if (!folder.exists()) folder.mkdirs();
@@ -44,10 +40,8 @@ public class GuisConfiguration {
                 if (!file.getName().endsWith(".yml")) continue;
                 FileConfiguration config = YamlConfiguration.loadConfiguration(file);
                 loadGui(config.getString("id", file.getName().replace(".yml", "")), file);
-                Bukkit.getLogger().info(file.getName() + " (id: " + config.getString("id") + ")" + " loaded");
             }
         }
-
     }
 
     public void unregisterGuiCommands() {
@@ -67,19 +61,19 @@ public class GuisConfiguration {
                     syncCommands.setAccessible(true);
                     syncCommands.invoke(plugin.getServer());
                 } catch (Exception e) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to sync commands", e);
+                    Logger.warn(plugin, "Failed to sync commands", e);
                 }
             });
 
         } catch (Exception e) {
-            plugin.getLogger().warning("Error unregistering gui commands: " + e.getMessage());
+            Logger.warn(plugin, "Error unregistering gui commands: " + e.getMessage());
         }
     }
 
     private void loadGui(String menuId, File file) {
 
         if (Libb.PARSED_GUIS.containsKey(menuId)) {
-            Bukkit.getLogger().warning("A duplicate of " + menuId + " was found");
+            Logger.warn(plugin, "A duplicate of " + menuId + " was found");
             return;
         }
         try {
@@ -110,9 +104,8 @@ public class GuisConfiguration {
                     preOpenExpressions, onOpen, onClose,
                     items));
 
-            amount++;
         } catch (Exception e) {
-            Bukkit.getLogger().warning("Error trying to load menu: " + e.getMessage());
+            Logger.warn(plugin, "Error trying to load menu: " + e.getMessage());
         }
     }
 }

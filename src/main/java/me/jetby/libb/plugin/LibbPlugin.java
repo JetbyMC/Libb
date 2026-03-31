@@ -1,8 +1,10 @@
 package me.jetby.libb.plugin;
 
+import lombok.Getter;
 import me.jetby.libb.Libb;
 import me.jetby.libb.command.CommandRegistrar;
-import me.jetby.libb.tool.Metrics;
+import me.jetby.libb.util.Metrics;
+import me.jetby.libb.util.VersionUtil;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,7 +20,13 @@ public class LibbPlugin extends JavaPlugin {
 
     public boolean isDebug;
 
+    @Getter
+    private final String version;
+    @Getter
+    private VersionUtil versionUtil;
+
     public LibbPlugin() {
+        this.version = getDescription().getVersion();
         Libb.HOOKED_PLUGINS.add(this);
     }
 
@@ -27,6 +35,17 @@ public class LibbPlugin extends JavaPlugin {
         return debug;
     }
 
+    public void setVersionUtil(VersionUtil versionUtil) {
+        this.versionUtil = versionUtil;
+    }
+
+    public void setVersionUtil(@NotNull String updateLink, @NotNull String permission) {
+        versionUtil = new VersionUtil(this, version, updateLink, permission);
+    }
+
+    public void setVersionUtil(@NotNull String updateLink) {
+        versionUtil = new VersionUtil(this, version, updateLink, getName() + ".update");
+    }
 
     /**
      * Creates a new Metrics instance.
