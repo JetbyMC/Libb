@@ -341,6 +341,8 @@ public class ParsedGui extends AdvancedGui {
 
         wrapper.setLore(applyPlaceholders(item.lore()));
         wrapper.enchanted(item.enchanted());
+        wrapper.customModelData(item.customModelData());
+        wrapper.amount(item.amount());
 
         if (item.flags() != null)
             wrapper.flags(item.flags().toArray(new ItemFlag[0]));

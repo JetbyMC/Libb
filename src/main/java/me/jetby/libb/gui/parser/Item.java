@@ -25,14 +25,14 @@ public class Item {
         this.lore = meta.getLore();
         this.amount = itemStack.getAmount();
         this.material = itemStack.getType();
-        this.customModelData = meta.getCustomModelData();
+        this.customModelData = meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
     }
 
-    public @Nullable ItemStack itemStack() {
+    public @NotNull ItemStack itemStack() {
         return itemStack;
     }
 
-    public void itemStack(@Nullable ItemStack itemStack) {
+    public void itemStack(@NotNull ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
@@ -152,7 +152,7 @@ public class Item {
         this.itemStack = new ItemStack(material, amount);
     }
 
-    private @Nullable ItemStack itemStack;
+    private @NotNull ItemStack itemStack;
     private @Nullable String type;
     private @Nullable String displayName;
     private @Nullable List<String> lore;
