@@ -5,6 +5,7 @@ A library for convenient and easy creation of Minecraft plugins.
 
 ### Requirements:
 ##### Java: 17
+##### Paper
 ##### Minecraft version: 1.20 and higher
 
 ---
