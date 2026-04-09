@@ -40,10 +40,15 @@ public final class ActionRegistry {
     static {
         register(LIBB, "message", new MessageImpl());
         register(LIBB, "action_bar", new ActionBarImpl());
+        register(LIBB, "actionbar", new ActionBarImpl());
         register(LIBB, "broadcast_action_bar", new BroadcastActionBarImpl());
+        register(LIBB, "broadcastactionbar", new BroadcastActionBarImpl());
         register(LIBB, "broadcast_message", new BroadcastMessageImpl());
+        register(LIBB, "broadcastmessage", new BroadcastMessageImpl());
         register(LIBB, "broadcast_sound", new BroadcastSoundImpl());
+        register(LIBB, "broadcastsound", new BroadcastSoundImpl());
         register(LIBB, "broadcast_title", new BroadcastTitleImpl());
+        register(LIBB, "broadcasttitle", new BroadcastTitleImpl());
         register(LIBB, "console", new ConsoleImpl());
         register(LIBB, "effect", new EffectImpl());
         register(LIBB, "player", new PlayerImpl());
