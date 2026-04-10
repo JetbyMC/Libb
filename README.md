@@ -428,6 +428,6 @@ repositories {
 ```
 ```gradle
 dependencies {
-    compileOnly "me.jetby:Libb:1.0"
+    compileOnly "me.jetby:Libb:1.1"
 }
 ```
