@@ -413,7 +413,7 @@ ctx.get(MyInterface.class);
 <dependency>
   <groupId>me.jetby</groupId>
   <artifactId>Libb</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <scope>provided</scope>
 </dependency>
 ```
