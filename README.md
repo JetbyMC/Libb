@@ -405,15 +405,15 @@ ctx.get(MyInterface.class);
 ###### MAVEN
 ```xml
 <repository>
-  <id>jetby-repo</id>
+  <id>JetbyMC</id>
   <url>https://api.jetby.org/</url>
 </repository>
 ```
 ```xml
 <dependency>
-  <groupId>me.jetby</groupId>
-  <artifactId>Libb</artifactId>
-  <version>1.1</version>
+  <groupId>me.jetby.libb</groupId>
+  <artifactId>api</artifactId>
+  <version>1.2</version>
   <scope>provided</scope>
 </dependency>
 ```
@@ -422,12 +422,12 @@ ctx.get(MyInterface.class);
 repositories {
     maven {
         url "https://api.jetby.org/"
-        name "jetby-repo"
+        name "JetbyMC"
     }
 }
 ```
 ```gradle
 dependencies {
-    compileOnly "me.jetby:Libb:1.1"
+    compileOnly "me.jetby.libb:api:1.2"
 }
 ```
