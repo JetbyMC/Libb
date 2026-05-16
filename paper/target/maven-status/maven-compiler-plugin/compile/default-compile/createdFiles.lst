@@ -1,0 +1,15 @@
+org\jetby\libb\configuration\GuisConfiguration.class
+org\jetby\libb\hook\Test.class
+org\jetby\libb\LibbCommand.class
+org\jetby\libb\plugin\LibbPlugin.class
+org\jetby\libb\test\command\TestCommand.class
+org\jetby\libb\test\text\TestSerializer.class
+org\jetby\libb\gui\GuiListener.class
+org\jetby\libb\plugin\PluginListener.class
+org\jetby\libb\test\Test.class
+org\jetby\libb\test\command\TestSubCommand.class
+org\jetby\libb\Libb.class
+org\jetby\libb\test\GuiTest.class
+org\jetby\libb\test\LibbDownloader.class
+org\jetby\libb\test\PGuiTest.class
+org\jetby\libb\test\TestPlugin.class
