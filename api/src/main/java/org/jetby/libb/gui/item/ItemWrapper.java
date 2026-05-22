@@ -1,6 +1,7 @@
 package org.jetby.libb.gui.item;
 
 import org.jetby.libb.color.Serializer;
+import org.jetby.libb.platform.PlatformMeta;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -26,7 +27,6 @@ public class ItemWrapper {
     private ItemStack itemStack;
     private Consumer<InventoryClickEvent> onClick;
     private Serializer serializer;
-
 
     public Serializer serializer() {
         return serializer;
@@ -89,11 +89,11 @@ public class ItemWrapper {
 
     public Component displayName() {
         ItemMeta meta = itemStack.getItemMeta();
-        return meta != null ? meta.displayName() : null;
+        return meta != null ? PlatformMeta.getDisplayName(meta) : null;
     }
 
     public void displayName(Component displayName) {
-        applyMeta(meta -> meta.displayName(displayName));
+        applyMeta(meta -> PlatformMeta.setDisplayName(meta, displayName));
     }
 
     public void setDisplayName(String text) {
@@ -106,11 +106,11 @@ public class ItemWrapper {
 
     public List<Component> lore() {
         ItemMeta meta = itemStack.getItemMeta();
-        return meta != null ? meta.lore() : null;
+        return meta != null ? PlatformMeta.getLore(meta) : null;
     }
 
     public void lore(List<Component> lore) {
-        applyMeta(meta -> meta.lore(lore));
+        applyMeta(meta -> PlatformMeta.setLore(meta, lore));
     }
 
     public void setLore(String... lines) {
@@ -275,7 +275,6 @@ public class ItemWrapper {
 
             wrapper.key(key);
             wrapper.serializer(serializer);
-
             wrapper.slots = slots;
             wrapper.onClick = onClick;
 

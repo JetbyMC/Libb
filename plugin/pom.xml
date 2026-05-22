@@ -11,8 +11,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>api</artifactId>
+    <artifactId>plugin</artifactId>
     <packaging>jar</packaging>
+
+    <name>Libb</name>
 
     <build>
         <defaultGoal>clean package</defaultGoal>
@@ -24,7 +26,6 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
-                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -49,12 +50,6 @@
         </resources>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>jetby-api</id>
-            <url>https://api.jetby.org/upload/</url>
-        </repository>
-    </distributionManagement>
 
     <repositories>
         <repository>
@@ -69,9 +64,19 @@
             <id>placeholderapi</id>
             <url>https://repo.helpch.at/releases/</url>
         </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetby.libb</groupId>
+            <artifactId>api</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -79,9 +84,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.12.2</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -97,10 +102,36 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>1.5.21</version>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.12.2</version>
             <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.17.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.17.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <version>4.17.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-gson</artifactId>
+            <version>4.17.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

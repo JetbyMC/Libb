@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetby.libb.platform.PlatformSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class VersionUtil implements Listener {
 
         if (version.equals(lastVersion)) return;
 
+
         message.add(LibbApi.Settings.CONFIG_COLORIZER.deserialize(""));
         message.add(LibbApi.Settings.CONFIG_COLORIZER.deserialize("<yellow>" + plugin.getName() + " <gray> | <white>Attention, update available, please update the plugin."));
         message.add(LibbApi.Settings.CONFIG_COLORIZER.deserialize("<yellow>" + plugin.getName() + " <gray> | <white>Your version: <red>" + version + " <white>а latest <green><b>" + lastVersion));
@@ -48,7 +50,7 @@ public class VersionUtil implements Listener {
         Player player = event.getPlayer();
         if (player.hasPermission(permission)) {
             for (Component c : message) {
-                player.sendMessage(c);
+                PlatformSender.sendMessage(player, c);
             }
         }
     }

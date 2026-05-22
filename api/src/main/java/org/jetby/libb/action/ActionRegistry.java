@@ -35,7 +35,7 @@ public final class ActionRegistry {
 
     private static final Map<String, Action> HANDLERS = new LinkedHashMap<>();
 
-    public static final String LIBB = "org/jetby/libb";
+    public static final String LIBB = "libb";
 
     static {
         register(LIBB, "message", new MessageImpl());

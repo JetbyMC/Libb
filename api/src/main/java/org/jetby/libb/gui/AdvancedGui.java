@@ -2,9 +2,11 @@ package org.jetby.libb.gui;
 
 import lombok.Getter;
 import org.jetby.libb.InstanceFactory;
+import org.jetby.libb.LibbApi;
 import org.jetby.libb.color.Serializer;
 import org.jetby.libb.gui.item.ItemWrapper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetby.libb.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +51,19 @@ public class AdvancedGui implements InventoryHolder {
 
     private final Map<String, Function<Player, String>> placeholders = new LinkedHashMap<>();
 
+    private static Inventory createInventory(InventoryHolder holder, int size, Component title) {
+        if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
+            return Bukkit.createInventory(holder, size, title);
+        }
+        return Bukkit.createInventory(holder, size, LegacyComponentSerializer.legacySection().serialize(title));
+    }
+
+    private static Inventory createInventory(InventoryHolder holder, InventoryType type, Component title) {
+        if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
+            return Bukkit.createInventory(holder, type, title);
+        }
+        return Bukkit.createInventory(holder, type, LegacyComponentSerializer.legacySection().serialize(title));
+    }
 
     public AdvancedGui(@NotNull Inventory inventory) {
         this.inventory = inventory;
@@ -63,12 +79,12 @@ public class AdvancedGui implements InventoryHolder {
 
     public AdvancedGui(String title, Serializer serializer) {
         this.defaultSerializer = serializer;
-        this.inventory = Bukkit.createInventory(this, InventoryType.CHEST, defaultSerializer.deserialize(title));
+        this.inventory = createInventory(this, InventoryType.CHEST, defaultSerializer.deserialize(title));
     }
 
     public AdvancedGui(String title, int size, Serializer serializer) {
         this.defaultSerializer = serializer;
-        this.inventory = Bukkit.createInventory(this, size, defaultSerializer.deserialize(title));
+        this.inventory = createInventory(this, size, defaultSerializer.deserialize(title));
     }
 
     public AdvancedGui(String title, InventoryType inventoryType) {
@@ -76,15 +92,15 @@ public class AdvancedGui implements InventoryHolder {
     }
 
     public AdvancedGui(Component title) {
-        this.inventory = Bukkit.createInventory(this, InventoryType.CHEST, title);
+        this.inventory = createInventory(this, InventoryType.CHEST, title);
     }
 
     public AdvancedGui(Component title, int size) {
-        this.inventory = Bukkit.createInventory(this, size, title);
+        this.inventory = createInventory(this, size, title);
     }
 
     public AdvancedGui(Component title, @NotNull InventoryType inventoryType) {
-        this.inventory = Bukkit.createInventory(this, inventoryType, title);
+        this.inventory = createInventory(this, inventoryType, title);
     }
 
     @Nullable
@@ -109,15 +125,12 @@ public class AdvancedGui implements InventoryHolder {
         if (wrapper.serializer() == null)
             wrapper.serializer(defaultSerializer);
 
-
         if (itemStack == null) {
             itemStack = new ItemStack(wrapper.material());
             ItemMeta meta = itemStack.getItemMeta();
             if (meta != null) {
-
                 meta.displayName(wrapper.displayName());
                 meta.lore(wrapper.lore());
-
                 meta.setCustomModelData(wrapper.customModelData());
                 if (wrapper.enchanted()) {
                     meta.addEnchant(Enchantment.KNOCKBACK, 1, false);
@@ -144,7 +157,6 @@ public class AdvancedGui implements InventoryHolder {
         }
 
         wrappers.put(key, wrapper);
-
     }
 
     public void open(@NotNull Player player) {
@@ -192,7 +204,6 @@ public class AdvancedGui implements InventoryHolder {
         this.onClose = event;
     }
 
-
     public void updateItem(@NotNull String key) {
         ItemWrapper wrapper = wrappers.get(key);
         if (wrapper == null || wrapper.slots() == null) return;
@@ -205,5 +216,4 @@ public class AdvancedGui implements InventoryHolder {
     public @NotNull Inventory getInventory() {
         return inventory;
     }
-
 }
