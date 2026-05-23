@@ -3,7 +3,7 @@
   <parent>
     <artifactId>Parent</artifactId>
     <groupId>org.jetby.libb</groupId>
-    <version>1.3</version>
+    <version>${PROJECT_VERSION}</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>plugin</artifactId>
@@ -16,6 +16,7 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
+    <finalName>Libb-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -89,10 +90,4 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-  <distributionManagement>
-    <repository>
-      <id>jetby-api</id>
-      <url>https://api.jetby.org/upload/</url>
-    </repository>
-  </distributionManagement>
 </project>
