@@ -1,3 +1,12 @@
+.idea
+/api.iml
+/plugin.iml
+
+
 /target/
-/paper/target/
+
+/plugin/target/
+/plugin/dependency-reduced-pom.xml
+
 /api/target/
+/api/dependency-reduced-pom.xml
