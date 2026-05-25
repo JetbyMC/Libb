@@ -1,11 +1,11 @@
 package org.jetby.libb.action.impl;
 
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 import org.jetby.libb.action.Action;
 import org.jetby.libb.action.ActionContext;
 import org.jetby.libb.action.ActionInput;
 import org.jetby.libb.platform.PlatformSender;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 public class BroadcastActionBarImpl implements Action {
 

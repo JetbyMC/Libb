@@ -1,10 +1,10 @@
 package org.jetby.libb.action;
 
-import org.jetby.libb.LibbApi;
-import org.jetby.libb.color.Serializer;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetby.libb.LibbApi;
+import org.jetby.libb.color.Serializer;
 
 public record ActionInput(@NotNull String rawText,
                           @Nullable Component serialized

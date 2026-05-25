@@ -1,28 +1,27 @@
 package org.jetby.libb.util;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.jetby.libb.AdventureReflect;
 import org.jetby.libb.LibbApi;
 import org.jetby.libb.platform.Platform;
 
 public class Logger {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-
     private static String toLegacy(Component component) {
-        return LegacyComponentSerializer.legacySection().serialize(component);
+        return AdventureReflect.toLegacySection(component);
     }
-    private static String toLegacy(String message) {
-        return toLegacy(MINI_MESSAGE.deserialize(message));
+
+    private static Component parse(String message) {
+        return AdventureReflect.miniMessage(message);
     }
+
     public static void info(Plugin plugin, String message) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().info(MINI_MESSAGE.deserialize(message));
+            plugin.getComponentLogger().info(parse(message));
         } else {
-            Bukkit.getConsoleSender().sendMessage("[INFO] ["+plugin.getName()+"] "+toLegacy(message));
+            Bukkit.getConsoleSender().sendMessage("[INFO] [" + plugin.getName() + "] " + toLegacy(parse(message)));
         }
     }
 
@@ -36,17 +35,17 @@ public class Logger {
 
     public static void warn(Plugin plugin, String message) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().warn(MINI_MESSAGE.deserialize(message));
+            plugin.getComponentLogger().warn(parse(message));
         } else {
-            Bukkit.getConsoleSender().sendMessage("[WARN] ["+plugin.getName()+"] "+toLegacy(message));
+            Bukkit.getConsoleSender().sendMessage("[WARN] [" + plugin.getName() + "] " + toLegacy(parse(message)));
         }
     }
 
     public static void warn(Plugin plugin, String message, Object... objects) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().warn(MINI_MESSAGE.deserialize(message), objects);
+            plugin.getComponentLogger().warn(parse(message), objects);
         } else {
-            Bukkit.getConsoleSender().sendMessage("[WARN] ["+plugin.getName()+"] "+toLegacy(message));
+            Bukkit.getConsoleSender().sendMessage("[WARN] [" + plugin.getName() + "] " + toLegacy(parse(message)));
         }
     }
 
@@ -60,9 +59,9 @@ public class Logger {
 
     public static void debug(Plugin plugin, String message) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().debug(MINI_MESSAGE.deserialize(message));
+            plugin.getComponentLogger().debug(parse(message));
         } else {
-            Bukkit.getConsoleSender().sendMessage("[DEBUG] ["+plugin.getName()+"] "+toLegacy(message));
+            Bukkit.getConsoleSender().sendMessage("[DEBUG] [" + plugin.getName() + "] " + toLegacy(parse(message)));
         }
     }
 
@@ -76,9 +75,9 @@ public class Logger {
 
     public static void error(Plugin plugin, String message) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().error(MINI_MESSAGE.deserialize(message));
+            plugin.getComponentLogger().error(parse(message));
         } else {
-            Bukkit.getConsoleSender().sendMessage("[ERROR] ["+plugin.getName()+"] "+toLegacy(message));
+            Bukkit.getConsoleSender().sendMessage("[ERROR] [" + plugin.getName() + "] " + toLegacy(parse(message)));
         }
     }
 
@@ -92,17 +91,17 @@ public class Logger {
 
     public static void error(Plugin plugin, String message, Object... objects) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().error(MINI_MESSAGE.deserialize(message), objects);
+            plugin.getComponentLogger().error(parse(message), objects);
         } else {
-            Bukkit.getConsoleSender().sendMessage("[ERROR] ["+plugin.getName()+"] "+toLegacy(message));
+            Bukkit.getConsoleSender().sendMessage("[ERROR] [" + plugin.getName() + "] " + toLegacy(parse(message)));
         }
     }
 
     public static void trace(Plugin plugin, String message) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
-            plugin.getComponentLogger().trace(MINI_MESSAGE.deserialize(message));
+            plugin.getComponentLogger().trace(parse(message));
         } else {
-            plugin.getLogger().finest(toLegacy(message));
+            plugin.getLogger().finest(toLegacy(parse(message)));
         }
     }
 

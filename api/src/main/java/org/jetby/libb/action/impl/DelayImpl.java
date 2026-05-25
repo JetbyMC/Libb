@@ -1,9 +1,9 @@
 package org.jetby.libb.action.impl;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetby.libb.action.Action;
 import org.jetby.libb.action.ActionContext;
 import org.jetby.libb.action.ActionInput;
-import org.jetbrains.annotations.NotNull;
 
 public class DelayImpl implements Action {
 

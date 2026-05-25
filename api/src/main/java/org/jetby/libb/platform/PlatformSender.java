@@ -2,10 +2,10 @@ package org.jetby.libb.platform;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetby.libb.AdventureReflect;
 import org.jetby.libb.LibbApi;
 
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.Collection;
 public class PlatformSender {
 
     private static String toLegacy(Component component) {
-        return LegacyComponentSerializer.legacySection().serialize(component);
+        return AdventureReflect.toLegacySection(component);
     }
 
     public static void sendMessage(CommandSender player, Component component) {
@@ -49,7 +49,7 @@ public class PlatformSender {
             Audience.audience(players).sendActionBar(component);
         } else {
             String legacy = toLegacy(component);
-            players.forEach(p ->  p.spigot().sendMessage(
+            players.forEach(p -> p.spigot().sendMessage(
                     net.md_5.bungee.api.ChatMessageType.ACTION_BAR,
                     net.md_5.bungee.api.chat.TextComponent.fromLegacyText(legacy)
             ));

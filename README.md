@@ -1,11 +1,15 @@
 # Libb
+
 A library for convenient and easy creation of Minecraft plugins.
 
 ---
 
 ### Requirements:
+
 ##### Java: 17
+
 ##### Paper
+
 ##### Minecraft version: 1.20 and higher
 
 ---
@@ -44,7 +48,8 @@ new GuiTest().open(player);
 <details>
 <summary>ParsedGui — Config-driven GUIs</summary>
 
-`ParsedGui` lets you define an entire inventory GUI in a YAML config file — items, slots, click actions, open/close hooks, and placeholders — with no boilerplate code.
+`ParsedGui` lets you define an entire inventory GUI in a YAML config file — items, slots, click actions, open/close
+hooks, and placeholders — with no boilerplate code.
 
 ---
 
@@ -80,7 +85,8 @@ Items:
         - "[message] <yellow>Shift+Left!"
 ```
 
-**Supported click types:** `any`, `left`, `shift_left`, `right`, `shift_right`, `middle`, `drop`, `control_drop`, `double`
+**Supported click types:** `any`, `left`, `shift_left`, `right`, `shift_right`, `middle`, `drop`, `control_drop`,
+`double`
 
 **Slot formats:**
 
@@ -121,6 +127,7 @@ gui.open(player);
 ```
 
 In YAML:
+
 ```yaml
 display_name: "<white>Price: <green>$%price%"
 lore:
@@ -166,6 +173,7 @@ ActionRegistry.register("myplugin", "my_action", (ctx, text) -> {
 ```
 
 In config:
+
 ```yaml
 on_click:
   any:
@@ -176,7 +184,8 @@ on_click:
 
 ### Slot priority & view_requirements
 
-Multiple items can target the same slot. The one with the lowest `priority` value whose `view_requirements` all pass wins.
+Multiple items can target the same slot. The one with the lowest `priority` value whose `view_requirements` all pass
+wins.
 This is useful for conditional items — e.g. show a locked version until the player has enough money.
 
 ```yaml
@@ -210,6 +219,7 @@ gui.refresh();
 ```
 
 Typically called inside a click handler after state changes:
+
 ```java
 gui.addClickHandler("toggle", event -> {
     toggleSomething(player);
@@ -223,7 +233,8 @@ gui.addClickHandler("toggle", event -> {
 
 You can subclass `ParsedGui` to add custom inventory slots, override rendering logic, etc.
 
-> ⚠️ `super(viewer, config, plugin)` calls `buildItems()` internally during construction — before your subclass fields are initialized. Override `buildItems()` with a null-check guard:
+> ⚠️ `super(viewer, config, plugin)` calls `buildItems()` internally during construction — before your subclass fields
+> are initialized. Override `buildItems()` with a null-check guard:
 
 ```java
 public class MyGui extends ParsedGui {
@@ -266,29 +277,31 @@ Actions are config-driven commands executed on a player. Each action is a string
 
 ### Built-in actions
 
-| Key | Description |
-|-----|-------------|
-| `[message]` | Send a message to the player |
-| `[broadcast_message]` | Broadcast a message to all players |
-| `[console]` | Run a command from console |
-| `[player]` | Run a command as the player |
-| `[effect]` | Apply a potion effect |
-| `[action_bar]` | Send an action bar message |
+| Key                      | Description                            |
+|--------------------------|----------------------------------------|
+| `[message]`              | Send a message to the player           |
+| `[broadcast_message]`    | Broadcast a message to all players     |
+| `[console]`              | Run a command from console             |
+| `[player]`               | Run a command as the player            |
+| `[effect]`               | Apply a potion effect                  |
+| `[action_bar]`           | Send an action bar message             |
 | `[broadcast_action_bar]` | Broadcast an action bar to all players |
-| `[title]` | Send a title to the player |
-| `[broadcast_title]` | Broadcast a title to all players |
-| `[sound]` | Play a sound for the player |
-| `[broadcast_sound]` | Play a sound for all players |
-| `[open]` | Open a GUI |
+| `[title]`                | Send a title to the player             |
+| `[broadcast_title]`      | Broadcast a title to all players       |
+| `[sound]`                | Play a sound for the player            |
+| `[broadcast_sound]`      | Play a sound for all players           |
+| `[open]`                 | Open a GUI                             |
 
 ### Usage
 
 **Simple run:**
+
 ```java
 ActionExecute.run(ActionContext.of(player), "[message] Hello!");
 ```
 
 **With extra objects in context:**
+
 ```java
 ActionExecute.run(
     ActionContext.of(player).with(entity),
@@ -338,6 +351,7 @@ public void onDisable() {
 #### Class (recommended for complex logic)
 
 Register in `onEnable`:
+
 ```java
 @Override
 public void onEnable() {
@@ -351,6 +365,7 @@ public void onDisable() {
 ```
 
 Implement `Action`:
+
 ```java
 public class GiveDiamondAction implements Action {
 
@@ -379,7 +394,8 @@ public class GiveDiamondAction implements Action {
 
 #### ActionContext
 
-`ActionContext` is a type-safe container for objects passed into an action. Objects are stored and retrieved by class — no string keys needed.
+`ActionContext` is a type-safe container for objects passed into an action. Objects are stored and retrieved by class —
+no string keys needed.
 
 ```java
 // Put objects in
@@ -393,6 +409,7 @@ Entity entity = ctx.require(Entity.class);  // throws if not provided
 ```
 
 If you want to store an object under an interface rather than its concrete class:
+
 ```java
 ctx.with(MyInterface.class, myObject);
 // retrieve as:
@@ -402,13 +419,16 @@ ctx.get(MyInterface.class);
 </details>
 
 # API
+
 ###### MAVEN
+
 ```xml
 <repository>
   <id>JetbyMC</id>
   <url>https://api.jetby.org/</url>
 </repository>
 ```
+
 ```xml
 <dependency>
   <groupId>org.jetby.libb</groupId>
@@ -417,7 +437,9 @@ ctx.get(MyInterface.class);
   <scope>provided</scope>
 </dependency>
 ```
+
 ###### GRADLE
+
 ```gradle
 repositories {
     maven {
@@ -426,6 +448,7 @@ repositories {
     }
 }
 ```
+
 ```gradle
 dependencies {
     compileOnly "org.jetby.libb:api:1.2"

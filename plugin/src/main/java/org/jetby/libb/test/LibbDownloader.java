@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -14,6 +15,12 @@ import java.net.URL;
 
 // Modrinth downloader example
 public class LibbDownloader {
+
+    private final JavaPlugin plugin;
+
+    public LibbDownloader(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     public void load() {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("Libb");
@@ -40,12 +47,12 @@ public class LibbDownloader {
         }
     }
 
-    private static String getLatestFileUrl(String projectSlug) {
+    private String getLatestFileUrl(String projectSlug) {
         try {
             URL url = new URL("https://api.modrinth.com/v2/project/" + projectSlug + "/version");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("User-Agent", "Libb Plugin (Contact: mail@jetby.org)");
+            conn.setRequestProperty("User-Agent", plugin.getName());
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5000);
 

@@ -1,5 +1,9 @@
 package org.jetby.libb;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetby.libb.command.AdvancedCommand;
 import org.jetby.libb.command.annotations.Permission;
 import org.jetby.libb.command.annotations.SubCommand;
@@ -11,10 +15,6 @@ import org.jetby.libb.gui.parser.ParserContext;
 import org.jetby.libb.platform.PlatformSender;
 import org.jetby.libb.test.PGuiTest;
 import org.jetby.libb.util.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.List;
 

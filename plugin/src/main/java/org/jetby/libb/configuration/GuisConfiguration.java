@@ -1,5 +1,8 @@
 package org.jetby.libb.configuration;
 
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetby.libb.Libb;
 import org.jetby.libb.LibbApi;
 import org.jetby.libb.action.record.ActionBlock;
@@ -7,9 +10,6 @@ import org.jetby.libb.action.record.Expression;
 import org.jetby.libb.command.CommandRegistrar;
 import org.jetby.libb.gui.parser.*;
 import org.jetby.libb.util.Logger;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;

@@ -1,10 +1,10 @@
 package org.jetby.libb.command;
 
-import org.jetby.libb.util.Logger;
 import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetby.libb.util.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

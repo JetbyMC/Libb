@@ -1,10 +1,10 @@
 package org.jetby.libb.color.serializers;
 
-import org.jetby.libb.color.Serializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetby.libb.color.Serializer;
 
 import java.util.ArrayList;
 import java.util.List;

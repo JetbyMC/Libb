@@ -1,16 +1,16 @@
 package org.jetby.libb.plugin;
 
 import lombok.Getter;
-import org.jetby.libb.Libb;
-import org.jetby.libb.command.CommandRegistrar;
-import org.jetby.libb.util.Metrics;
-import org.jetby.libb.util.VersionUtil;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetby.libb.Libb;
+import org.jetby.libb.command.CommandRegistrar;
+import org.jetby.libb.util.Metrics;
+import org.jetby.libb.util.VersionUtil;
 
 import java.io.File;
 

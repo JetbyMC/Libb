@@ -1,17 +1,16 @@
 package org.jetby.libb;
 
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.Plugin;
 import org.jetby.libb.color.HashedSerializer;
 import org.jetby.libb.color.SerializerType;
 import org.jetby.libb.configuration.GuisConfiguration;
 import org.jetby.libb.gui.AdvancedGui;
 import org.jetby.libb.gui.GuiListener;
 import org.jetby.libb.plugin.LibbPlugin;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
 import org.jetby.libb.util.Logger;
 
 import java.util.HashSet;
@@ -21,9 +20,6 @@ import java.util.Set;
 public final class Libb extends LibbPlugin implements LibbApi {
 
 
-    @Deprecated(since = "1.2", forRemoval = true)
-    public static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-
     public static final Set<Plugin> HOOKED_PLUGINS = new HashSet<>();
 
     public GuisConfiguration guisConfiguration;
@@ -31,9 +27,22 @@ public final class Libb extends LibbPlugin implements LibbApi {
     public static Libb INSTANCE;
 
     @Override
-    public void onEnable() {
-        LibbApi.init();
+    public void onLoad() {
+        DependencyLoader.loadDependencies(this);
+        if (!DependencyLoader.isNativeAdventure()) {
+            try {
+                AdventureReflect.init(DependencyLoader.getAdventureLoader());
+            } catch (Exception e) {
+                getLogger().severe("Failed to init AdventureReflect!");
+                e.printStackTrace();
+            }
+        }
+    }
 
+    @Override
+    public void onEnable() {
+
+        LibbApi.init();
         INSTANCE = this;
         saveDefaultConfig();
 

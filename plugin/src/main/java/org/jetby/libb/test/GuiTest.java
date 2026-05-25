@@ -1,9 +1,9 @@
 package org.jetby.libb.test;
 
+import org.bukkit.Material;
 import org.jetby.libb.color.Serializer;
 import org.jetby.libb.gui.AdvancedGui;
 import org.jetby.libb.gui.item.ItemWrapper;
-import org.bukkit.Material;
 
 public class GuiTest extends AdvancedGui {
     public GuiTest(String title) {

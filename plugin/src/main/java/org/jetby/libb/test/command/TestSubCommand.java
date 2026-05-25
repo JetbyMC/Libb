@@ -1,12 +1,12 @@
 package org.jetby.libb.test.command;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetby.libb.command.annotations.Permission;
 import org.jetby.libb.command.annotations.PlayerOnly;
 import org.jetby.libb.command.annotations.SubCommand;
 import org.jetby.libb.command.annotations.TabComplete;
 import org.jetby.libb.command.annotations.messages.InsufficientArgs;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 

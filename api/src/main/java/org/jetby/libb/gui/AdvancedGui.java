@@ -1,12 +1,7 @@
 package org.jetby.libb.gui;
 
 import lombok.Getter;
-import org.jetby.libb.InstanceFactory;
-import org.jetby.libb.LibbApi;
-import org.jetby.libb.color.Serializer;
-import org.jetby.libb.gui.item.ItemWrapper;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -17,9 +12,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetby.libb.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetby.libb.AdventureReflect;
+import org.jetby.libb.InstanceFactory;
+import org.jetby.libb.LibbApi;
+import org.jetby.libb.color.Serializer;
+import org.jetby.libb.gui.item.ItemWrapper;
+import org.jetby.libb.platform.Platform;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -55,14 +55,14 @@ public class AdvancedGui implements InventoryHolder {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
             return Bukkit.createInventory(holder, size, title);
         }
-        return Bukkit.createInventory(holder, size, LegacyComponentSerializer.legacySection().serialize(title));
+        return Bukkit.createInventory(holder, size, AdventureReflect.toLegacySection(title));
     }
 
     private static Inventory createInventory(InventoryHolder holder, InventoryType type, Component title) {
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
             return Bukkit.createInventory(holder, type, title);
         }
-        return Bukkit.createInventory(holder, type, LegacyComponentSerializer.legacySection().serialize(title));
+        return Bukkit.createInventory(holder, type, AdventureReflect.toLegacySection(title));
     }
 
     public AdvancedGui(@NotNull Inventory inventory) {

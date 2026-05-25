@@ -1,11 +1,11 @@
 package org.jetby.libb.plugin;
 
-import org.jetby.libb.Libb;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetby.libb.Libb;
 
 public class PluginListener implements Listener {
     public PluginListener() {

@@ -1,21 +1,20 @@
 package org.jetby.libb.color.serializers;
 
-import org.jetby.libb.color.Serializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.jetby.libb.AdventureReflect;
+import org.jetby.libb.color.Serializer;
 
 public class LegacySerializer implements Serializer {
-    private final LegacyComponentSerializer legacy;
+    private final char character;
 
     public LegacySerializer(char character) {
-        this.legacy = character == '&'
-                ? LegacyComponentSerializer.legacyAmpersand()
-                : LegacyComponentSerializer.legacySection();
+        this.character = character;
     }
 
     @Override
     public Component deserialize(String input) {
-        return legacy.deserialize(input);
+        return character == '&'
+                ? AdventureReflect.legacyAmpersand(input)
+                : AdventureReflect.legacySection(input);
     }
-
 }

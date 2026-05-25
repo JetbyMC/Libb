@@ -1,7 +1,5 @@
 package org.jetby.libb.gui.parser;
 
-import org.jetby.libb.action.record.ActionBlock;
-import org.jetby.libb.action.record.Expression;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -14,6 +12,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetby.libb.action.record.ActionBlock;
+import org.jetby.libb.action.record.Expression;
 
 import java.util.*;
 

@@ -1,7 +1,5 @@
 package org.jetby.libb.gui;
 
-import org.jetby.libb.InstanceFactory;
-import org.jetby.libb.gui.item.ItemWrapper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -14,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+import org.jetby.libb.InstanceFactory;
+import org.jetby.libb.gui.item.ItemWrapper;
 
 public class GuiListener implements Listener {
 

@@ -1,9 +1,9 @@
 package org.jetby.libb.gui.parser;
 
 import lombok.Getter;
-import org.jetby.libb.gui.item.ItemWrapper;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetby.libb.gui.item.ItemWrapper;
 
 @Getter
 public class ConfigurableClickEvent extends InventoryClickEvent {

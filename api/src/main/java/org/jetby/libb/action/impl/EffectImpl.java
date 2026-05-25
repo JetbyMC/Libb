@@ -1,12 +1,12 @@
 package org.jetby.libb.action.impl;
 
-import org.jetby.libb.action.Action;
-import org.jetby.libb.action.ActionContext;
-import org.jetby.libb.action.ActionInput;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+import org.jetby.libb.action.Action;
+import org.jetby.libb.action.ActionContext;
+import org.jetby.libb.action.ActionInput;
 
 public class EffectImpl implements Action {
 

@@ -1,8 +1,6 @@
 package org.jetby.libb.command;
 
 import lombok.Getter;
-import org.jetby.libb.command.annotations.SubCommand;
-import org.jetby.libb.command.annotations.TabComplete;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +8,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetby.libb.command.annotations.SubCommand;
+import org.jetby.libb.command.annotations.TabComplete;
 
 import java.lang.reflect.Method;
 import java.util.*;

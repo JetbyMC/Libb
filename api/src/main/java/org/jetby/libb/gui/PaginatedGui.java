@@ -2,13 +2,13 @@ package org.jetby.libb.gui;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetby.libb.color.Serializer;
-import org.jetby.libb.gui.item.ItemWrapper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetby.libb.color.Serializer;
+import org.jetby.libb.gui.item.ItemWrapper;
 
 import java.util.LinkedList;
 

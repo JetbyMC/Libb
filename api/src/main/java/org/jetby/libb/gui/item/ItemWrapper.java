@@ -1,7 +1,5 @@
 package org.jetby.libb.gui.item;
 
-import org.jetby.libb.color.Serializer;
-import org.jetby.libb.platform.PlatformMeta;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -12,6 +10,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.jetby.libb.color.Serializer;
+import org.jetby.libb.platform.PlatformMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;

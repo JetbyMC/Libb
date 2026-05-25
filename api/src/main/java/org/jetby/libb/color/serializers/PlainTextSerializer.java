@@ -1,7 +1,7 @@
 package org.jetby.libb.color.serializers;
 
-import org.jetby.libb.color.Serializer;
 import net.kyori.adventure.text.Component;
+import org.jetby.libb.color.Serializer;
 
 public class PlainTextSerializer implements Serializer {
 

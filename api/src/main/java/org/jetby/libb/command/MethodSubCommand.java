@@ -1,5 +1,8 @@
 package org.jetby.libb.command;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetby.libb.LibbApi;
 import org.jetby.libb.command.annotations.Cooldown;
 import org.jetby.libb.command.annotations.Permission;
@@ -7,9 +10,6 @@ import org.jetby.libb.command.annotations.PlayerOnly;
 import org.jetby.libb.command.annotations.messages.Arg;
 import org.jetby.libb.command.annotations.messages.InsufficientArgs;
 import org.jetby.libb.util.CooldownUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;

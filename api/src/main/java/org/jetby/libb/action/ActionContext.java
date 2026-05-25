@@ -2,12 +2,12 @@ package org.jetby.libb.action;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetby.libb.LibbApi;
-import org.jetby.libb.color.Serializer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetby.libb.LibbApi;
+import org.jetby.libb.color.Serializer;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
