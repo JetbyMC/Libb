@@ -11,6 +11,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,44 +119,48 @@ public class AdvancedGui implements InventoryHolder {
 
     public void setItem(@NotNull String key, @NotNull ItemWrapper wrapper) {
         if (wrapper.slots() == null) return;
-
         if (wrapper.key() == null) wrapper.key(key);
+        if (wrapper.serializer() == null) wrapper.serializer(defaultSerializer);
 
         ItemStack itemStack = wrapper.itemStack();
-        if (wrapper.serializer() == null)
-            wrapper.serializer(defaultSerializer);
-
         if (itemStack == null) {
             itemStack = new ItemStack(wrapper.material());
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta != null) {
-                meta.displayName(wrapper.displayName());
-                meta.lore(wrapper.lore());
-                meta.setCustomModelData(wrapper.customModelData());
-                if (wrapper.enchanted()) {
-                    meta.addEnchant(Enchantment.KNOCKBACK, 1, false);
-                }
-                if (wrapper.flags() != null && !wrapper.flags().isEmpty()) {
-                    for (ItemFlag flag : wrapper.flags()) {
-                        meta.addItemFlags(flag);
-                    }
-                }
-                meta.getPersistentDataContainer().set(InstanceFactory.GUI_ITEM, PersistentDataType.STRING, key);
-                itemStack.setItemMeta(meta);
-            }
             wrapper.itemStack(itemStack);
         }
 
         ItemMeta meta = itemStack.getItemMeta();
         if (meta != null) {
+            if (wrapper.displayName() != null)
+                meta.displayName(wrapper.displayName());
+            if (wrapper.lore() != null)
+                meta.lore(wrapper.lore());
+
+            if (wrapper.customModelDataComponent() != null) {
+                meta.setCustomModelDataComponent(wrapper.customModelDataComponent());
+            } else if (wrapper.customModelData() != 0) {
+                meta.setCustomModelData(wrapper.customModelData());
+            }
+            if (wrapper.customModelDataComponent() != null) {
+                meta.setCustomModelDataComponent(wrapper.customModelDataComponent());
+            } else if (wrapper.customModelData() != 0) {
+                meta.setCustomModelData(wrapper.customModelData());
+            }
+            if (wrapper.enchanted()) {
+                meta.addEnchant(Enchantment.KNOCKBACK, 1, false);
+            }
+            if (wrapper.flags() != null && !wrapper.flags().isEmpty()) {
+                for (ItemFlag flag : wrapper.flags()) {
+                    meta.addItemFlags(flag);
+                }
+            }
             meta.getPersistentDataContainer().set(InstanceFactory.GUI_ITEM, PersistentDataType.STRING, key);
+            itemStack.setItemMeta(meta);
+            ItemMeta checkMeta = itemStack.getItemMeta();
         }
-        itemStack.setItemMeta(meta);
 
         for (int slot : wrapper.slots()) {
             inventory.setItem(slot, itemStack);
         }
-
         wrappers.put(key, wrapper);
     }
 

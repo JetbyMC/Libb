@@ -177,7 +177,20 @@ public class SkullCreator {
                 b64.substring(b64.length() - 10).hashCode()
         );
         GameProfile profile = new GameProfile(id, "Player");
-        profile.getProperties().put("textures", new Property("textures", b64));
+
+        try {
+            profile.getProperties().put("textures", new Property("textures", b64));
+        } catch (NoSuchMethodError e) {
+            try {
+                Method propertiesMethod = profile.getClass().getMethod("properties");
+                Object propertyMap = propertiesMethod.invoke(profile);
+                Method putMethod = propertyMap.getClass().getMethod("put", Object.class, Object.class);
+                putMethod.invoke(propertyMap, "textures", new Property("textures", b64));
+            } catch (Exception ex) {
+                throw new RuntimeException("Failed to set skull texture property (unsupported authlib version)", ex);
+            }
+        }
+
         return profile;
     }
 

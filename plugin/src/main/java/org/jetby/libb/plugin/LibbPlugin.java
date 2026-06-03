@@ -18,6 +18,8 @@ import java.io.File;
 public class LibbPlugin extends JavaPlugin {
 
     public boolean isDebug;
+    @Getter
+    private Metrics bStats;
 
     @Getter
     private final String version;
@@ -54,7 +56,7 @@ public class LibbPlugin extends JavaPlugin {
      *                  href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
     public void setBStats(Plugin plugin, int serviceId) {
-        new Metrics(plugin, serviceId);
+       this.bStats = new Metrics(plugin, serviceId);
     }
 
     public void registerCommand(JavaPlugin plugin, String commandName, @NotNull CommandExecutor executor) {

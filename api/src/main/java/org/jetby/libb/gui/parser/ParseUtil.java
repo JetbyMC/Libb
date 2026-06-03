@@ -105,7 +105,7 @@ public class ParseUtil {
             String type = section.getString("type");
             String displayName = section.getString("display_name");
             List<String> lore = section.getStringList("lore");
-            int customModelData = section.getInt("custom-model-data");
+            Object customModelData = section.get("custom-model-data");
 
             String material = section.getString("material", "STONE").toUpperCase();
             ItemStack itemStack;

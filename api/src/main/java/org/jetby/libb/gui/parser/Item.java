@@ -32,7 +32,7 @@ public class Item {
     private @NotNull List<String> viewRequirements = new ArrayList<>();
     private int priority = Integer.MAX_VALUE;
     private boolean enchanted;
-    private int customModelData;
+    private Object customModelData;
     private int amount;
 
     public Item(@NotNull Material material) {
@@ -49,7 +49,8 @@ public class Item {
     public Item(@NotNull ItemStack itemStack) {
         this.itemStack = itemStack;
         ItemMeta meta = itemStack.getItemMeta();
-        this.displayName = meta.getDisplayName();
+        String name = meta.getDisplayName();
+        this.displayName = name.isEmpty() ? null : name;
         this.lore = meta.getLore();
         this.amount = itemStack.getAmount();
         this.material = itemStack.getType();
@@ -136,11 +137,11 @@ public class Item {
         this.onClick = onClick;
     }
 
-    public int customModelData() {
+    public Object customModelData() {
         return customModelData;
     }
 
-    public void customModelData(int customModelData) {
+    public void customModelData(Object customModelData) {
         this.customModelData = customModelData;
     }
 

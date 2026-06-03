@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -97,6 +98,7 @@ public class ItemWrapper {
     }
 
     public void setDisplayName(String text) {
+        if (text==null) return;
         displayName(serializer == null ? Component.text(text) : serializer.deserialize(text));
     }
 
@@ -129,13 +131,80 @@ public class ItemWrapper {
         lore(list);
     }
 
+    public CustomModelDataComponent customModelDataComponent() {
+        try {
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta == null) return null;
+            return (CustomModelDataComponent) ItemMeta.class
+                    .getMethod("getCustomModelDataComponent")
+                    .invoke(meta);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void customModelDataComponent(CustomModelDataComponent component) {
+        try {
+            Class<?> componentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
+            java.lang.reflect.Method method = ItemMeta.class.getMethod("setCustomModelDataComponent", componentClass);
+            applyMeta(meta -> {
+                try {
+                    method.invoke(meta, component);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        } catch (NoSuchMethodException e) {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int customModelData() {
         ItemMeta meta = itemStack.getItemMeta();
         return meta != null && meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
     }
 
-    public void customModelData(int customModelData) {
-        applyMeta(meta -> meta.setCustomModelData(customModelData));
+    public void customModelData(Object customModelData) {
+        if (customModelData == null) return;
+
+        if (customModelData instanceof Integer i) {
+            applyMeta(meta -> meta.setCustomModelData(i));
+            return;
+        }
+
+        try {
+            Class<?> componentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
+            java.lang.reflect.Method getMethod = ItemMeta.class.getMethod("getCustomModelDataComponent");
+            java.lang.reflect.Method setMethod = ItemMeta.class.getMethod("setCustomModelDataComponent", componentClass);
+
+            if (componentClass.isInstance(customModelData)) {
+                applyMeta(meta -> {
+                    try {
+                        setMethod.invoke(meta, customModelData);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+                return;
+            }
+
+            if (customModelData instanceof String s) {
+                applyMeta(meta -> {
+                    try {
+                        Object component = getMethod.invoke(meta);
+                        java.lang.reflect.Method setStrings = component.getClass().getMethod("setStrings", List.class);
+                        setStrings.invoke(component, List.of(s));
+                        setMethod.invoke(meta, component);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+                return;
+            }
+
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+        }
     }
 
     public boolean enchanted() {
@@ -188,7 +257,7 @@ public class ItemWrapper {
         private int amount = 1;
         private Component displayName;
         private List<Component> lore;
-        private int customModelData;
+        private Object customModelData;
         private boolean enchanted;
         private List<ItemFlag> flags;
         private Consumer<InventoryClickEvent> onClick;
@@ -243,7 +312,7 @@ public class ItemWrapper {
             return this;
         }
 
-        public Builder customModelData(int customModelData) {
+        public Builder customModelData(Object customModelData) {
             this.customModelData = customModelData;
             return this;
         }
@@ -280,7 +349,7 @@ public class ItemWrapper {
 
             if (displayName != null) wrapper.displayName(displayName);
             if (lore != null) wrapper.lore(lore);
-            if (customModelData != 0) wrapper.customModelData(customModelData);
+            if (customModelData != null) wrapper.customModelData(customModelData);
             if (enchanted) wrapper.enchanted(true);
             if (flags != null) wrapper.flags(flags.toArray(new ItemFlag[0]));
 

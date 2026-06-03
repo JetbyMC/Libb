@@ -47,8 +47,7 @@ public class DependencyLoader {
             nativeAdventure = true;
             plugin.getLogger().info("Adventure found natively.");
             return;
-        } catch (ClassNotFoundException ignored) {
-        }
+        } catch (ClassNotFoundException ignored) {}
 
         List<URL> urls = new ArrayList<>();
         for (Map.Entry<String, String> entry : ARTIFACTS.entrySet()) {

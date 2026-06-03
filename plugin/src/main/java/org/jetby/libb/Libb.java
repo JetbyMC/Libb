@@ -12,6 +12,7 @@ import org.jetby.libb.gui.AdvancedGui;
 import org.jetby.libb.gui.GuiListener;
 import org.jetby.libb.plugin.LibbPlugin;
 import org.jetby.libb.util.Logger;
+import org.jetby.libb.util.Metrics;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +59,13 @@ public final class Libb extends LibbPlugin implements LibbApi {
         Logger.info(this, "<#1CFB00>╔");
         Logger.info(this, "<#1CFB00>║  <#0AD7FB>Libb <red>v" + getVersion());
         Logger.info(this, "<#1CFB00>║");
+
         setBStats(this, 30288);
+
+        for (Plugin plugin : LibbApi.getDependentPlugins()) {
+            getBStats().addCustomChart(new Metrics.SimplePie("plugin", plugin::getName));
+        }
+
         setVersionUtil("https://raw.githubusercontent.com/MrJetby/Libb/refs/heads/master/VERSION");
         new LibbCommand(this).register();
         guisConfiguration = new GuisConfiguration(this);
