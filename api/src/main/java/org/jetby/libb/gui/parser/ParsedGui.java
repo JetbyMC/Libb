@@ -385,6 +385,11 @@ public class ParsedGui extends PaginatedGui {
         wrapper.customModelData(item.customModelData());
         wrapper.amount(item.amount());
 
+        if (item.enchantments() != null) {
+            wrapper.enchantments(item.enchantments());
+
+        }
+
         if (item.flags() != null)
             wrapper.flags(item.flags().toArray(new ItemFlag[0]));
 

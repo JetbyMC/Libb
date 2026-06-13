@@ -136,17 +136,18 @@ public class AdvancedGui implements InventoryHolder {
                 meta.lore(wrapper.lore());
 
             if (wrapper.customModelDataComponent() != null) {
-                meta.setCustomModelDataComponent(wrapper.customModelDataComponent());
+                meta.setCustomModelDataComponent( (CustomModelDataComponent) wrapper.customModelDataComponent());
             } else if (wrapper.customModelData() != 0) {
                 meta.setCustomModelData(wrapper.customModelData());
             }
-            if (wrapper.customModelDataComponent() != null) {
-                meta.setCustomModelDataComponent(wrapper.customModelDataComponent());
-            } else if (wrapper.customModelData() != 0) {
-                meta.setCustomModelData(wrapper.customModelData());
+
+            for (Map.Entry<Enchantment, Integer> entry : wrapper.enchantments().entrySet()) {
+                meta.addEnchant(entry.getKey(), entry.getValue(), true);
             }
+
+
             if (wrapper.enchanted()) {
-                meta.addEnchant(Enchantment.KNOCKBACK, 1, false);
+                meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             }
             if (wrapper.flags() != null && !wrapper.flags().isEmpty()) {
                 for (ItemFlag flag : wrapper.flags()) {
@@ -155,7 +156,6 @@ public class AdvancedGui implements InventoryHolder {
             }
             meta.getPersistentDataContainer().set(InstanceFactory.GUI_ITEM, PersistentDataType.STRING, key);
             itemStack.setItemMeta(meta);
-            ItemMeta checkMeta = itemStack.getItemMeta();
         }
 
         for (int slot : wrapper.slots()) {

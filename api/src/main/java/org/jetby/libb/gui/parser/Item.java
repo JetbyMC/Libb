@@ -1,5 +1,6 @@
 package org.jetby.libb.gui.parser;
 
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -7,14 +8,12 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetby.libb.action.record.ActionBlock;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Item {
 
@@ -25,8 +24,8 @@ public class Item {
     private @Nullable List<String> lore;
     private @NotNull Material material;
     private @NotNull List<Integer> slots = new ArrayList<>();
-    private @Nullable List<ItemFlag> flags;
-    private @Nullable List<Enchantment> enchantments;
+    private @Nullable Set<ItemFlag> flags;
+    private @Nullable Map<Enchantment, Integer> enchantments;
     private @Nullable ConfigurationSection section;
     private @NotNull Map<ClickType, ActionBlock> onClick = new HashMap<>();
     private @NotNull List<String> viewRequirements = new ArrayList<>();
@@ -55,6 +54,8 @@ public class Item {
         this.amount = itemStack.getAmount();
         this.material = itemStack.getType();
         this.customModelData = meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
+        this.enchantments = itemStack.getEnchantments();
+        this.flags = meta.getItemFlags();
     }
 
     public @NotNull ItemStack itemStack() {
@@ -113,19 +114,37 @@ public class Item {
         this.slots = slots;
     }
 
-    public @Nullable List<ItemFlag> flags() {
+    public @Nullable Set<ItemFlag> flags() {
         return flags;
     }
 
-    public void flags(@Nullable List<ItemFlag> flags) {
+    public void flags(@Nullable Set<ItemFlag> flags) {
         this.flags = flags;
     }
 
-    public @Nullable List<Enchantment> enchantments() {
+    /**
+     * @deprecated  use {@link #flags(Set)} instead.
+     */
+    @Deprecated(since = "1.2.2")
+    public void flags(@Nullable List<ItemFlag> flags) {
+        this.flags = new HashSet<>(flags);
+    }
+
+    public @Nullable Map<Enchantment, Integer> enchantments() {
         return enchantments;
     }
 
+
     public void enchantments(@Nullable List<Enchantment> enchantments) {
+        if (this.enchantments ==null) {
+            this.enchantments = new HashMap<>();
+        }
+        for (Enchantment enchantment : enchantments) {
+            this.enchantments.put(enchantment, 1);
+        }
+    }
+
+    public void enchantments(@Nullable Map<Enchantment, Integer> enchantments) {
         this.enchantments = enchantments;
     }
 
@@ -184,8 +203,8 @@ public class Item {
         Item copy = new Item(this.itemStack.clone());
         copy.type = this.type;
         copy.slots = new ArrayList<>(this.slots);
-        copy.flags = this.flags == null ? null : new ArrayList<>(this.flags);
-        copy.enchantments = this.enchantments == null ? null : new ArrayList<>(this.enchantments);
+        copy.flags = this.flags == null ? null : new HashSet<>(this.flags);
+        copy.enchantments = this.enchantments == null ? null : new HashMap<>(this.enchantments);
         copy.section = this.section;
         copy.onClick = new HashMap<>(this.onClick);
         copy.viewRequirements = new ArrayList<>(this.viewRequirements);

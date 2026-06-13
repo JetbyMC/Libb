@@ -14,12 +14,47 @@ import org.jetbrains.annotations.Range;
 import org.jetby.libb.color.Serializer;
 import org.jetby.libb.platform.PlatformMeta;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class ItemWrapper {
+
+
+    private static final Class<?> COMPONENT_CLASS;
+    private static final Method GET_COMPONENT;
+    private static final Method SET_COMPONENT;
+    private static final Method SET_STRINGS;
+    private static final boolean NEW_API;
+
+    static {
+        Class<?> cc = null;
+        Method get = null, set = null, setStr = null;
+        boolean supported = false;
+
+        try {
+            cc = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
+            get = ItemMeta.class.getMethod("getCustomModelDataComponent");
+            set = ItemMeta.class.getMethod("setCustomModelDataComponent", cc);
+            setStr = cc.getMethod("setStrings", List.class);
+
+            get.setAccessible(true);
+            set.setAccessible(true);
+            setStr.setAccessible(true);
+
+            supported = true;
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {}
+
+        COMPONENT_CLASS = cc;
+        GET_COMPONENT = get;
+        SET_COMPONENT = set;
+        SET_STRINGS = setStr;
+        NEW_API = supported;
+    }
+
 
     @Nullable
     private String key;
@@ -98,7 +133,7 @@ public class ItemWrapper {
     }
 
     public void setDisplayName(String text) {
-        if (text==null) return;
+        if (text == null) return;
         displayName(serializer == null ? Component.text(text) : serializer.deserialize(text));
     }
 
@@ -165,6 +200,8 @@ public class ItemWrapper {
         return meta != null && meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
     }
 
+
+
     public void customModelData(Object customModelData) {
         if (customModelData == null) return;
 
@@ -175,8 +212,8 @@ public class ItemWrapper {
 
         try {
             Class<?> componentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
-            java.lang.reflect.Method getMethod = ItemMeta.class.getMethod("getCustomModelDataComponent");
-            java.lang.reflect.Method setMethod = ItemMeta.class.getMethod("setCustomModelDataComponent", componentClass);
+            Method getMethod = ItemMeta.class.getMethod("getCustomModelDataComponent");
+            Method setMethod = ItemMeta.class.getMethod("setCustomModelDataComponent", componentClass);
 
             if (componentClass.isInstance(customModelData)) {
                 applyMeta(meta -> {
@@ -193,7 +230,7 @@ public class ItemWrapper {
                 applyMeta(meta -> {
                     try {
                         Object component = getMethod.invoke(meta);
-                        java.lang.reflect.Method setStrings = component.getClass().getMethod("setStrings", List.class);
+                        Method setStrings = component.getClass().getMethod("setStrings", List.class);
                         setStrings.invoke(component, List.of(s));
                         setMethod.invoke(meta, component);
                     } catch (Exception ex) {
@@ -219,6 +256,15 @@ public class ItemWrapper {
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             });
         }
+    }
+
+    public Map<Enchantment, Integer> enchantments() {
+        return itemStack.getEnchantments();
+    }
+
+    public void enchantments(Map<Enchantment, Integer> enchantments) {
+        itemStack.addUnsafeEnchantments(enchantments);
+
     }
 
     public List<ItemFlag> flags() {
@@ -259,6 +305,7 @@ public class ItemWrapper {
         private List<Component> lore;
         private Object customModelData;
         private boolean enchanted;
+        private Map<Enchantment, Integer> enchantments;
         private List<ItemFlag> flags;
         private Consumer<InventoryClickEvent> onClick;
         private Serializer serializer;
@@ -270,6 +317,11 @@ public class ItemWrapper {
 
         public Builder key(@Nullable String key) {
             this.key = key;
+            return this;
+        }
+
+        public Builder enchantments(Map<Enchantment, Integer> enchantments) {
+            this.enchantments = enchantments;
             return this;
         }
 
@@ -351,6 +403,7 @@ public class ItemWrapper {
             if (lore != null) wrapper.lore(lore);
             if (customModelData != null) wrapper.customModelData(customModelData);
             if (enchanted) wrapper.enchanted(true);
+            if (enchantments != null) wrapper.enchantments(enchantments);
             if (flags != null) wrapper.flags(flags.toArray(new ItemFlag[0]));
 
             return wrapper;

@@ -46,6 +46,6 @@ public class TestSerializer {
 
         long ms = (System.nanoTime() - start) / 1_000_000;
         System.out.println("1M cache hits: " + ms + " ms");
-        System.out.println("avg: " + (ms / 1_000_000.0) + " ms/вызов");
+        System.out.println("avg: " + (ms / 1_000_000.0) + " ms/calls");
     }
 }

@@ -57,6 +57,7 @@ public final class ActionRegistry {
         register(LIBB, "sound", new SoundImpl());
         register(LIBB, "refresh", new RefreshImpl());
         register(LIBB, "delay", new DelayImpl());
+        register(LIBB, "close", new CloseImpl());
     }
 
     /**
