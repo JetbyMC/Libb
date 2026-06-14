@@ -21,6 +21,7 @@ import org.jetby.libb.LibbApi;
 import org.jetby.libb.color.Serializer;
 import org.jetby.libb.gui.item.ItemWrapper;
 import org.jetby.libb.platform.Platform;
+import org.jetby.libb.util.CustomModelDataUtil;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -135,11 +136,7 @@ public class AdvancedGui implements InventoryHolder {
             if (wrapper.lore() != null)
                 meta.lore(wrapper.lore());
 
-            if (wrapper.customModelDataComponent() != null) {
-                meta.setCustomModelDataComponent( (CustomModelDataComponent) wrapper.customModelDataComponent());
-            } else if (wrapper.customModelData() != 0) {
-                meta.setCustomModelData(wrapper.customModelData());
-            }
+            CustomModelDataUtil.apply(meta, wrapper.customModelDataComponent());
 
             for (Map.Entry<Enchantment, Integer> entry : wrapper.enchantments().entrySet()) {
                 meta.addEnchant(entry.getKey(), entry.getValue(), true);

@@ -7,7 +7,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -46,7 +45,8 @@ public class ItemWrapper {
             setStr.setAccessible(true);
 
             supported = true;
-        } catch (ClassNotFoundException | NoSuchMethodException ignored) {}
+        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+        }
 
         COMPONENT_CLASS = cc;
         GET_COMPONENT = get;
@@ -166,33 +166,26 @@ public class ItemWrapper {
         lore(list);
     }
 
-    public CustomModelDataComponent customModelDataComponent() {
+    public Object customModelDataComponent() {
+        if (!NEW_API) return null;
         try {
             ItemMeta meta = itemStack.getItemMeta();
             if (meta == null) return null;
-            return (CustomModelDataComponent) ItemMeta.class
-                    .getMethod("getCustomModelDataComponent")
-                    .invoke(meta);
+            return GET_COMPONENT.invoke(meta);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public void customModelDataComponent(CustomModelDataComponent component) {
-        try {
-            Class<?> componentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
-            java.lang.reflect.Method method = ItemMeta.class.getMethod("setCustomModelDataComponent", componentClass);
-            applyMeta(meta -> {
-                try {
-                    method.invoke(meta, component);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-        } catch (NoSuchMethodException e) {
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public void customModelDataComponent(Object component) {
+        if (!NEW_API || !COMPONENT_CLASS.isInstance(component)) return;
+        applyMeta(meta -> {
+            try {
+                SET_COMPONENT.invoke(meta, component);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 
     public int customModelData() {
@@ -201,46 +194,36 @@ public class ItemWrapper {
     }
 
 
-
     public void customModelData(Object customModelData) {
         if (customModelData == null) return;
 
-        if (customModelData instanceof Integer i) {
-            applyMeta(meta -> meta.setCustomModelData(i));
+        if (!NEW_API) {
+            if (customModelData instanceof Integer i) {
+                applyMeta(meta -> meta.setCustomModelData(i));
+            }
             return;
         }
 
-        try {
-            Class<?> componentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
-            Method getMethod = ItemMeta.class.getMethod("getCustomModelDataComponent");
-            Method setMethod = ItemMeta.class.getMethod("setCustomModelDataComponent", componentClass);
-
-            if (componentClass.isInstance(customModelData)) {
-                applyMeta(meta -> {
-                    try {
-                        setMethod.invoke(meta, customModelData);
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-                return;
-            }
-
-            if (customModelData instanceof String s) {
-                applyMeta(meta -> {
-                    try {
-                        Object component = getMethod.invoke(meta);
-                        Method setStrings = component.getClass().getMethod("setStrings", List.class);
-                        setStrings.invoke(component, List.of(s));
-                        setMethod.invoke(meta, component);
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
-                });
-                return;
-            }
-
-        } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+        if (customModelData instanceof Integer i) {
+            applyMeta(meta -> meta.setCustomModelData(i));
+        } else if (COMPONENT_CLASS.isInstance(customModelData)) {
+            applyMeta(meta -> {
+                try {
+                    SET_COMPONENT.invoke(meta, customModelData);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        } else if (customModelData instanceof String s) {
+            applyMeta(meta -> {
+                try {
+                    Object component = GET_COMPONENT.invoke(meta);
+                    SET_STRINGS.invoke(component, List.of(s));
+                    SET_COMPONENT.invoke(meta, component);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
     }
 

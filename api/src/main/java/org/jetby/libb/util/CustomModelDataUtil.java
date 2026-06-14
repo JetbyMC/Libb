@@ -132,10 +132,8 @@ public class CustomModelDataUtil {
                 if (section.contains("floats")) {
                     List<Float> expected = section.getDoubleList("floats").stream()
                             .map(Double::floatValue).toList();
-                    if (!((List<Float>) GET_FLOATS.invoke(component)).containsAll(expected))
-                        return false;
+                    return ((List<Float>) GET_FLOATS.invoke(component)).containsAll(expected);
                 }
-                return true;
             }
         } catch (Exception e) { e.printStackTrace(); }
 
