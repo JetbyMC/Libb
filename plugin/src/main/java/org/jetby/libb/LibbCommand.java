@@ -17,6 +17,7 @@ import org.jetby.libb.gui.parser.ParsedGui;
 import org.jetby.libb.gui.parser.ParserContext;
 import org.jetby.libb.platform.PlatformSender;
 import org.jetby.libb.test.PGuiTest;
+import org.jetby.libb.test.ParsedGuiTest;
 import org.jetby.libb.util.CustomModelDataUtil;
 import org.jetby.libb.util.Logger;
 
@@ -52,12 +53,9 @@ public class LibbCommand extends AdvancedCommand {
     }
 
     @SubCommand("test")
-    public void test(Player player) {
-        ItemStack item = new ItemStack(Material.DIAMOND);
-        ItemMeta meta = item.getItemMeta();
-        CustomModelDataUtil.apply(meta, "bat");
-        item.setItemMeta(meta);
-        player.getInventory().addItem(item);
+    public void test(Player player, String gui) {
+        new ParsedGuiTest(player, LibbApi.Settings.PARSED_GUIS.get(gui), plugin).open(player);
+
     }
 
     @SubCommand("open")

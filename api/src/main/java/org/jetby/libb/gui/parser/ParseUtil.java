@@ -50,21 +50,22 @@ public class ParseUtil {
     public static List<Integer> parseSlots(Object slotObject) {
         List<Integer> slots = new ArrayList<>();
 
-        if (slotObject instanceof Integer) {
-            slots.add((Integer) slotObject);
-        } else if (slotObject instanceof String) {
-            String slotString = ((String) slotObject).trim();
-            slots.addAll(parseSlotString(slotString));
-        } else if (slotObject instanceof List<?>) {
-            for (Object obj : (List<?>) slotObject) {
-                if (obj instanceof Integer) {
-                    slots.add((Integer) obj);
-                } else if (obj instanceof String) {
-                    slots.addAll(parseSlotString((String) obj));
+        switch (slotObject) {
+            case Integer i -> slots.add(i);
+            case String string -> {
+                String slotString = string.trim();
+                slots.addAll(parseSlotString(slotString));
+            }
+            case List<?> objects -> {
+                for (Object obj : objects) {
+                    if (obj instanceof Integer) {
+                        slots.add((Integer) obj);
+                    } else if (obj instanceof String) {
+                        slots.addAll(parseSlotString((String) obj));
+                    }
                 }
             }
-        } else {
-            throw new RuntimeException("Unknown slot format: " + slotObject);
+            case null, default -> throw new RuntimeException("Unknown slot format: " + slotObject);
         }
 
         return slots;
