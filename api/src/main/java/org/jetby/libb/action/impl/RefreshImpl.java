@@ -12,7 +12,6 @@ public class RefreshImpl implements Action {
     @Override
     public void execute(@NotNull ActionContext ctx, @NotNull ActionInput input) {
         ParsedGui parsedGui = ctx.get(ParsedGui.class);
-
         Player player = ctx.getPlayer();
         if (player == null) return;
 

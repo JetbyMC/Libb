@@ -27,14 +27,12 @@ public class ParsedGui extends ParsableGui {
         super(viewer, config, plugin, parserContext);
     }
 
-    public ParsedGui setReplace(String key, String input) {
+    public void setReplace(String key, String input) {
         super.setReplace(key, input);
-        return this;
     }
 
-    public ParsedGui setReplace(Item item, String key, String input) {
+    public void setReplace(Item item, String key, String input) {
         super.setReplace(item, key, input);
-        return this;
     }
 
     public ParsedGui addClickHandler(String sectionKey, Consumer<ConfigurableClickEvent> handler) {
@@ -52,5 +50,4 @@ public class ParsedGui extends ParsableGui {
     public void refreshHelpfulPlaceholders() {
         setReplace("{material}", item -> item.material().name());
     }
-
 }

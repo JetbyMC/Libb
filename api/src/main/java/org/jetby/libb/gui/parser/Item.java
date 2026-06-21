@@ -18,6 +18,7 @@ import java.util.*;
 public class Item {
 
 
+    private UUID uniqueKey;
     private @NotNull ItemStack itemStack;
     private @Nullable String type;
     private @Nullable String displayName;
@@ -37,12 +38,14 @@ public class Item {
     public Item(@NotNull Material material) {
         this.material = material;
         this.itemStack = new ItemStack(material);
+        this.uniqueKey = UUID.randomUUID();
     }
 
     public Item(@NotNull Material material, int amount) {
         this.material = material;
         this.amount = amount;
         this.itemStack = new ItemStack(material, amount);
+        this.uniqueKey = UUID.randomUUID();
     }
 
     public Item(@NotNull ItemStack itemStack) {
@@ -56,6 +59,7 @@ public class Item {
         this.customModelData = meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
         this.enchantments = itemStack.getEnchantments();
         this.flags = meta.getItemFlags();
+        this.uniqueKey = UUID.randomUUID();
     }
 
     public @NotNull ItemStack itemStack() {
@@ -199,8 +203,13 @@ public class Item {
         this.enchanted = enchanted;
     }
 
+    public UUID uniqueKey() {
+        return uniqueKey;
+    }
+
     public Item clone() {
         Item copy = new Item(this.itemStack.clone());
+        copy.uniqueKey = this.uniqueKey;
         copy.type = this.type;
         copy.slots = new ArrayList<>(this.slots);
         copy.flags = this.flags == null ? null : new HashSet<>(this.flags);

@@ -122,7 +122,7 @@ public class ParsableGui extends PaginatedGui {
      * <br> But individual for every {@link Item}
      *
      */
-    private final Map<Item, Map<String, String>> individualPlaceholders = new HashMap<>();
+    private final Map<UUID, Map<String, String>> individualPlaceholders = new HashMap<>();
 
     /**
      * The plugin that "owns" this GUI instance.
@@ -277,7 +277,12 @@ public class ParsableGui extends PaginatedGui {
      */
     public void refresh() {
         clearInventory();
-        buildItems(gui.getItems());
+
+        List<Item> parsedItems = new ArrayList<>();
+        for (Item item : gui.getItems()) {
+            parsedItems.add(applyPlaceholders(item));
+        }
+        buildItems(parsedItems);
     }
 
     /**
@@ -454,7 +459,7 @@ public class ParsableGui extends PaginatedGui {
                                   @NotNull InventoryClickEvent event) {
 
         Map<String, String> mergedPlaceholders = new HashMap<>(placeholders);
-        Map<String, String> own = individualPlaceholders.get(item);
+        Map<String, String> own = item.section() != null ? individualPlaceholders.get(item.uniqueKey()) : null;
         if (own != null) mergedPlaceholders.putAll(own);
 
 
@@ -506,32 +511,29 @@ public class ParsableGui extends PaginatedGui {
      *
      * @param key   the placeholder token, e.g. {@code "{price}"}
      * @param input the value to substitute in, e.g. {@code "500"}
-     * @return {@code this} for method chaining
      */
-    public ParsableGui setReplace(String key, String input) {
+    public void setReplace(String key, String input) {
         placeholders.put(key, input);
-        return this;
     }
 
     public void setReplace(String key, Function<Item, String> replacer) {
         if (gui.getItems() == null) return;
-
         for (Item item : gui.getItems()) {
-            Map<String, String> itemPlaceholders = individualPlaceholders.computeIfAbsent(item, k -> new HashMap<>());
-            itemPlaceholders.put(key, replacer.apply(item));
+            if (item.section() == null) continue;
+            individualPlaceholders.computeIfAbsent(item.uniqueKey(), k -> new HashMap<>())
+                    .put(key, replacer.apply(item));
         }
     }
 
-    public ParsableGui setReplace(Item item, String key, String input) {
-        Map<String, String> itemPlaceholders = individualPlaceholders.get(item);
+    public void setReplace(Item item, String key, String input) {
+        Map<String, String> itemPlaceholders = individualPlaceholders.get(item.uniqueKey());
         if (itemPlaceholders == null) {
             itemPlaceholders = new HashMap<>();
             itemPlaceholders.put(key, input);
-            individualPlaceholders.put(item, itemPlaceholders);
+            individualPlaceholders.put(item.uniqueKey(), itemPlaceholders);
         } else {
             itemPlaceholders.put(key, input);
         }
-        return this;
     }
 
     /**
@@ -554,8 +556,8 @@ public class ParsableGui extends PaginatedGui {
             line = line.replace(entry.getKey(), entry.getValue());
         }
 
-        if (item != null) {
-            Map<String, String> own = individualPlaceholders.get(item);
+        if (item != null && item.section() != null) {
+            Map<String, String> own = individualPlaceholders.get(item.uniqueKey());
             if (own != null) {
                 for (Map.Entry<String, String> entry : own.entrySet()) {
                     line = line.replace(entry.getKey(), entry.getValue());
@@ -579,17 +581,13 @@ public class ParsableGui extends PaginatedGui {
     }
 
     public Item applyPlaceholders(Item item) {
+        Item copy = item.clone();
 
-        String displayName = applyPlaceholders(item.displayName(), item);
-        List<String> lore = applyPlaceholders(item.lore(), item);
-        List<String> viewRequirements = applyPlaceholders(item.viewRequirements(), item);
+        copy.displayName(applyPlaceholders(item.displayName(), item));
+        copy.lore(applyPlaceholders(item.lore(), item));
+        copy.viewRequirements(applyPlaceholders(item.viewRequirements(), item));
 
-        item.displayName(displayName);
-        item.lore(lore);
-        item.viewRequirements(viewRequirements);
-
-
-        return item;
+        return copy;
     }
 
 
