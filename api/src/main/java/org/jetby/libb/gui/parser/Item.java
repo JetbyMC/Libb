@@ -208,7 +208,8 @@ public class Item {
     }
 
     public Item clone() {
-        Item copy = new Item(this.itemStack.clone());
+        Item copy = new Item(this.material);
+        copy.itemStack = this.itemStack.clone();
         copy.uniqueKey = this.uniqueKey;
         copy.type = this.type;
         copy.slots = new ArrayList<>(this.slots);
