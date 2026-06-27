@@ -36,6 +36,7 @@ public class PlatformMeta {
     }
 
     public static void setLore(ItemMeta meta, List<Component> lore) {
+        if (lore==null || lore.isEmpty()) return;
         if (LibbApi.Settings.PLATFORM == Platform.PAPER) {
             meta.lore(lore);
         } else {

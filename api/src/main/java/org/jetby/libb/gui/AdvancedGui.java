@@ -21,6 +21,7 @@ import org.jetby.libb.LibbApi;
 import org.jetby.libb.color.Serializer;
 import org.jetby.libb.gui.item.ItemWrapper;
 import org.jetby.libb.platform.Platform;
+import org.jetby.libb.platform.PlatformMeta;
 import org.jetby.libb.util.CustomModelDataUtil;
 
 import java.util.HashMap;
@@ -131,10 +132,9 @@ public class AdvancedGui implements InventoryHolder {
 
         ItemMeta meta = itemStack.getItemMeta();
         if (meta != null) {
-            if (wrapper.displayName() != null)
-                meta.displayName(wrapper.displayName());
-            if (wrapper.lore() != null)
-                meta.lore(wrapper.lore());
+
+            PlatformMeta.setDisplayName(meta, wrapper.displayName());
+            PlatformMeta.setLore(meta, wrapper.lore());
 
             CustomModelDataUtil.apply(meta, wrapper.customModelDataComponent());
 

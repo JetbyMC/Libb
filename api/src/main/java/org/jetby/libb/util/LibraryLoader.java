@@ -7,27 +7,26 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LibraryLoader {
 
-    private static final Map<String, URLClassLoader> CACHE = new HashMap<>();
+    private static final Set<String> CACHE = new HashSet<>();
 
-    public static synchronized URLClassLoader load(Plugin plugin, String cacheKey, String repo, List<Dependency> dependencies) {
-        URLClassLoader cached = CACHE.get(cacheKey);
-        if (cached != null) {
-            return cached;
-        }
+    public static synchronized void load(Plugin plugin, String cacheKey, String repo, List<Dependency> dependencies) {
+        if (CACHE.contains(cacheKey)) return;
 
         File libsFolder = new File("plugins" + File.separator + "Libb" + File.separator + "libs");
         libsFolder.mkdirs();
 
-        List<URL> urls = new ArrayList<>();
+        ClassLoader pluginCL = plugin.getClass().getClassLoader();
 
         for (Dependency dependency : dependencies) {
             if (isAvailable(dependency.checkClass())) {
@@ -41,22 +40,34 @@ public class LibraryLoader {
 
             try {
                 File jar = downloadJar(fullUrl, libsFolder, jarName, plugin);
-                urls.add(jar.toURI().toURL());
-                plugin.getLogger().info("Loaded library " + fullUrl);
+                injectUrl(pluginCL, jar.toURI().toURL());
+                plugin.getLogger().info("Loaded library: " + jarName);
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to load: " + fullUrl);
                 e.printStackTrace();
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
             }
         }
 
-        URLClassLoader loader = new URLClassLoader(
-                cacheKey,
-                urls.toArray(new URL[0]),
-                LibraryLoader.class.getClassLoader()
-        );
+        CACHE.add(cacheKey);
+    }
 
-        CACHE.put(cacheKey, loader);
-        return loader;
+    private static void injectUrl(ClassLoader classLoader, URL url) throws Throwable {
+        Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+        unsafeField.setAccessible(true);
+        sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+
+        Field implLookup = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+        long offset = unsafe.staticFieldOffset(implLookup);
+        MethodHandles.Lookup trustedLookup = (MethodHandles.Lookup) unsafe.getObject(MethodHandles.Lookup.class, offset);
+
+        MethodHandle addURL = trustedLookup.findVirtual(
+                URLClassLoader.class,
+                "addURL",
+                MethodType.methodType(void.class, URL.class)
+        );
+        addURL.invoke(classLoader, url);
     }
 
     private static boolean isAvailable(String className) {
