@@ -209,21 +209,21 @@ public class Item {
 
     public Item clone() {
         Item copy = new Item(this.material);
+        copy.displayName = this.displayName;
+        copy.lore = this.lore == null ? null : new ArrayList<>(this.lore);
+        copy.amount = this.amount;
+        copy.customModelData = this.customModelData;
+        copy.flags = this.flags == null ? null : new HashSet<>(this.flags);
+        copy.enchanted = this.enchanted;
+        copy.enchantments = this.enchantments == null ? null : new HashMap<>(this.enchantments);
         copy.itemStack = this.itemStack.clone();
         copy.uniqueKey = this.uniqueKey;
         copy.type = this.type;
         copy.slots = new ArrayList<>(this.slots);
-        copy.flags = this.flags == null ? null : new HashSet<>(this.flags);
-        copy.enchantments = this.enchantments == null ? null : new HashMap<>(this.enchantments);
         copy.section = this.section;
         copy.onClick = new HashMap<>(this.onClick);
         copy.viewRequirements = new ArrayList<>(this.viewRequirements);
         copy.priority = this.priority;
-        copy.enchanted = this.enchanted;
-        copy.customModelData = this.customModelData;
-        copy.amount = this.amount;
-        copy.displayName = this.displayName;
-        copy.lore = this.lore == null ? null : new ArrayList<>(this.lore);
         return copy;
     }
 }
