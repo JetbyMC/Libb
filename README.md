@@ -454,3 +454,5 @@ dependencies {
     compileOnly "org.jetby.libb:api:1.2"
 }
 ```
+
+[![](https://bstats.org/signatures/bukkit/Libb.svg)](https://bstats.org/plugin/bukkit/Libb/30288)
